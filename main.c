@@ -9,13 +9,17 @@
 #include <sys/types.h>
 #define c _textcolor
 #define b _textbackground
-#define MAX_ALTERACOES 30
+#define MAX_ALTERACOES 5
 
-typedef struct alteracoes { // Guarda as alteracoes nos pixels para desfazer/refazer
+typedef struct FilaAlteracoes { // Fila circular que guarda as alteracoes nos pixels para desfazer/refazer
 	int pixels[MAX_ALTERACOES][3]; // Guarda os valores dos pixels [x, y, cor]
 	int atual; // Índice em pixels[][]
-	int topo; // Marca a quantidade de alteracoes armazenadas
-} alteracoes;
+	int inicio; // Guarda a alteração mais antiga
+	int fim; // Guarda a alteração mais recente e marca a quantidade de alteracoes armazenadas
+} FilaAlteracoes;
+
+FilaAlteracoes a;
+char nomeArquivo[50]; // Guarda o nome do arquivo para não reinserir
 
 void criarNovaImagem(int limparMemoria);
 void abrirArquivo(void);
@@ -29,14 +33,16 @@ void editar(int alt, int lar, int img[alt][lar]);
 void exibirComandos(void);
 void pintar(int preencher, int alt, int lar, int img[alt][lar]);
 void linha(int alt, int lar, int img[alt][lar]);
-void desfazer(alteracoes a, int alt, int lar, int img[alt][lar]);
-void refazer(alteracoes a, int alt, int lar, int img[alt][lar]);
-char *salvar(char *nomeArquivo, int alt, int lar, int img[alt][lar]);
+void desfazer(int alt, int lar, int img[alt][lar]);
+void refazer(int alt, int lar, int img[alt][lar]);
+void salvar(int alt, int lar, int img[alt][lar]);
 
 int main(void) {
 	int opcao;
 
 	do {
+		nomeArquivo[0] = '\0';
+
 		do {
 			system("cls");
 			opcao = -1;
@@ -152,7 +158,9 @@ void lerColorir438(FILE *arquivo) {
 	fseek(arquivo, 2, SEEK_CUR);
 	for (int i = 0; i < alt*lar; i++) {
 		char c = fgetc(arquivo);
-		if (c < 58) {
+		if (c == '\n')
+			i--;
+		else if (c < 58) {
 			img[i/lar][i%alt] = c - 48; // Converte do int (48...57) = char ('0'...'9') para int (48...57)-48 = (0...9)
 			//printf("\nbyte #%d: int %d char %c\tint-48 %d", i, c, c, c-48); 
 		} else {
@@ -161,12 +169,20 @@ void lerColorir438(FILE *arquivo) {
 		}
 	}
 	fclose(arquivo);
+
+	// [DEBUG Info] .colorir438 metadados
+	c(13); printf("\nMetadata do .colorir438");
+	c(7); printf("\nDimensoes: "); c(3); printf("%d", lar); c(7); printf("x"); c(3); printf("%d", alt);
+	_getch();
+
+	if (lar > 50) {
+		
+	}
 	
 	editar(alt, lar, img);
 }
 
 void lerBmp(FILE *arquivo) {
-	// Recupera informações para leitura do arquivo
 	struct {
 		int imgDataStart; // Byte onde os dados da imagem começam
 		struct {
@@ -175,6 +191,8 @@ void lerBmp(FILE *arquivo) {
 		} tam; // Dimensões da imagem
 		int bitspp; // Bits por pixel (1, 4, 8, 16, 24 ou 32 bits) -> (2, 16 [txtcolor/cmd color], 256, RGB, RGBA) (2^n colors)
 	} meta;
+
+	// Recupera informações para leitura do arquivo
 	fseek(arquivo, 10, SEEK_SET);
 	meta.imgDataStart = fgetc(arquivo);
 	fseek(arquivo, 18, SEEK_SET);
@@ -186,12 +204,16 @@ void lerBmp(FILE *arquivo) {
 	// Lê e armazena os valores dos pixels
 	int i = 0;
 	while(!feof(arquivo)) {
-		printf("\nbyte #%d\tint: %d", i, fgetc(arquivo));
+		printf("\nbyte #%d\tint: %d", i, fgetc(arquivo)); // [DEBUG Info] .bmp bytes
 		i++;
 	}
 	fclose(arquivo);
 
-	printf("Metadata do .bmp\n\tDimensoes: %dx%d\n\tComeco dos bytes dos pixels: %d\n\tBits por pixel: %d", meta.tam.lar, meta.tam.alt, meta.imgDataStart, meta.bitspp);
+	// [DEBUG Info] .bmp metadados
+	c(13); printf("Metadados do .bmp");
+	c(7); printf("\nDimensoes: "); c(3); printf("%dx%d", meta.tam.lar, meta.tam.alt);
+	c(7); printf("\nInicio dos valores dos pixels: "); c(3); printf("%d", meta.imgDataStart); 
+	c(7); printf("\nBits por pixel: "); c(3); printf("%d", meta.bitspp);
 	_getch();
 }
 
@@ -245,22 +267,42 @@ void desenhar(int mostrarRegua, int alt, int lar, int img[alt][lar]) {
 			}
 		}
 	}
-	printf("\n\n");
+	printf("\n");
 }
 
 void editar(int alt, int lar, int img[alt][lar]) {
 	desenhar(1, alt, lar, img);
 
-	alteracoes a;
-	a.atual = -1;
-	a.topo = -1;
+	// Reinicia o FilaAlteracoes a
+	a.atual = 0;
+	a.fim = 0;
+	a.inicio = 0;
 
-	char nomeArquivo[50]; // Guarda o nome do arquivo para não reinserir
 	char cmd;
 
-	do { 
+	do {
+		// Mostra informações sobre o arquivo e alterações
+		c(8); printf("Editando \""); c(7); printf("%s", nomeArquivo); c(8); printf("\" (%dx%d) ", lar, alt);
+		if (a.inicio <= a.atual)
+			printf("Desfazer: %d/%d ", a.atual - a.inicio, MAX_ALTERACOES);
+		else
+			printf("Desfazer: %d/%d ", a.atual + (MAX_ALTERACOES - (a.inicio - 1)), MAX_ALTERACOES);
+		if (a.atual <= a.fim)
+			printf("Refazer: %d", a.fim - a.atual);
+		else
+			printf("Refazer: %d", a.fim + (MAX_ALTERACOES - (a.atual - 1)));
+		printf("\natual: %d fim: %d inicio: %d", a.atual, a.fim, a.inicio);
+		
+		// [DEBUG Info] FilaAlteracoes
+		c(14); for (int i = 0; i < MAX_ALTERACOES; i++) {
+			printf("\n%d: [%d, %d, %d]", i, a.pixels[i][0], a.pixels[i][1], a.pixels[i][2]);
+			if (i == a.atual) printf(" <= atual");
+			if (i == a.inicio) printf(" <- inicio");
+			if (i == a.fim) printf(" <- fim");
+		} c(15);
+
 		// Lê o comando
-		c(7); printf("Digite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
+		c(7); printf("\nDigite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
 		cmd = _getch();
 		printf("\n");
 
@@ -279,16 +321,18 @@ void editar(int alt, int lar, int img[alt][lar]) {
 				linha(alt, lar, img);
 				break;
 			case 'd': // D - Desfazer: Desfaz ultima modificação -
-				desfazer(a, alt, lar, img);
+				desfazer(alt, lar, img);
 				break;
 			case 'r': // R - Refazer: Refaz ultima modificao desfeita
-				refazer(a, alt, lar, img);
-				break;
-			case 'g': // G - Gravar: Salva a imagem em um arquivo
-				strcpy(nomeArquivo, salvar(nomeArquivo, alt, lar, img)); // Guarda o nome do arquivo retornado (digitado em salvar()) em nomeArquivo
+				refazer(alt, lar, img);
 				break;
 			case 'v': // V - Visualizar: Mostra o arquivo sem as réguas
 				desenhar(0, alt, lar, img);
+				break;
+			case 'n': // N - reNomear: Renomeia a imagem e salva em um arquivo
+				nomeArquivo[0] = '\0';
+			case 'g': // G - Gravar: Salva a imagem em um arquivo
+				salvar(alt, lar, img); // Guarda o nome do arquivo retornado (digitado em salvar()) em nomeArquivo
 				break;
 			case 's': // S - Sair: Volta ao menu principal
 				return;
@@ -306,8 +350,9 @@ void exibirComandos(void) {
 	c(11); printf("\n  [l]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
 	c(11); printf("\n  [d]"); c(10); printf(" Desfazer"); c(7); printf(": Desfaz a ultima modificacao na imagem");
 	c(11); printf("\n  [r]"); c(10); printf(" Refazer"); c(7); printf(": Refaz a ultima modificacao desfeita na imagem");
+	c(11); printf("\n\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as reguas esquerda e superior");
 	c(11); printf("\n  [g]"); c(10); printf(" Gravar"); c(7); printf(": Salva a imagem em um arquivo");
-	c(11); printf("\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as reguas esquerda e superior");
+	c(11); printf("\n  [n]"); c(10); printf(" reNomear"); c(7); printf(": Renomeia a imagem e salva em um arquivo");
 	c(11); printf("\n  [s]"); c(10); printf(" Sair"); c(7); printf(": Sai do modo de edicao e retorna ao menu\n");
 }
 
@@ -318,6 +363,7 @@ void pintar(int preencher, int alt, int lar, int img[alt][lar]) {
 	}
 	printf("\n");
 
+	// Lê a cor do pixel
 	int cor;
 	char entrada[7];
 	do {
@@ -330,13 +376,31 @@ void pintar(int preencher, int alt, int lar, int img[alt][lar]) {
 	entrada[1] = '\0';
 	entrada[2] = '\0';
 	
+	// Lê as coordenadas do pixel
 	int x, y;
 	do {
 		printf("Digite as coordenadas do pixel a ser alterado ("); c(3); printf("x y"); c(15); printf("), separadas por espaco (Ex: \""); c(3); printf("32 10"); c(15); printf("\"): ");
 		fflush(stdin);
 		fgets(entrada, sizeof entrada, stdin);
+		// adicionar restricao tamanho
 	} while (sscanf(entrada, "%d %d\n", &x, &y) != 2);
 
+	// Armazena a alteração
+	a.pixels[a.atual][0] = img[y][x];
+	a.pixels[a.atual][1] = x;
+	a.pixels[a.atual][2] = y;
+
+	// Gerencia os índices do armazenamento
+	a.atual++;
+	if (a.atual == MAX_ALTERACOES)
+		a.atual = 0;
+	if (a.atual == a.inicio)
+		a.inicio++;
+	if (a.inicio == MAX_ALTERACOES)
+		a.inicio = 0;
+	a.fim = a.atual; // Descarta alterações desfeitas
+
+	// Altera a cor nas coordenadas
 	img[y][x] = cor;
 }
 
@@ -348,26 +412,54 @@ void linha(int alt, int lar, int img[alt][lar]) {
 
 }
 
-void desfazer(alteracoes a, int alt, int lar, int img[alt][lar]) {
+void desfazer(int alt, int lar, int img[alt][lar]) {
 	// Checa se há alterações a desfazer
-	if (a.atual == 0) {
-		printf("Nao ha alteracoes a serem desfeitas (voce pode refazer %d alteracoes)",  a.topo - a.atual);
+	if (a.atual == a.inicio) {
+		printf("Nao ha alteracoes a serem desfeitas\n");
 		_getch();
 		return;
 	}
 
-	// Checa qual é a situação do a.inicio e a.fim e realiza a troca de valores entre img e a.items
-}
-void refazer(alteracoes a, int alt, int lar, int img[alt][lar]) {
-	// Checa se há alterações desfeitas a refazer
-	if (a.atual == a.topo) {
-		printf("Nao ha alteracoes a serem refeitas (voce pode desfazer %d alteracoes)", a.atual);
-		_getch();
-		return;
-	}	
+	// Altera o a.atual uma alteracao para trás (volta para a última alteração)
+	if (a.atual > 0)
+		a.atual--;
+	else
+		a.atual = MAX_ALTERACOES - 1;
+
+	int tmp_cor = img[a.pixels[a.atual][2]][a.pixels[a.atual][1]];
+	
+	// Desfaz a alteração nas coordenadas (x a.pixels[a.atual][1]], y a.pixels[a.atual][2]) com a cor em a.pixels[a.atual][0]
+	printf("\nDesfazendo (x %d, y %d) com a cor %d (era %d)\n", a.pixels[a.atual][1], a.pixels[a.atual][2], a.pixels[a.atual][0], img[a.pixels[a.atual][2]][a.pixels[a.atual][1]]);
+	img[a.pixels[a.atual][2]][a.pixels[a.atual][1]] = a.pixels[a.atual][0];
+
+	a.pixels[a.atual][0] = tmp_cor;
+
 }
 
-char *salvar(char *nomeArquivo, int alt, int lar, int img[alt][lar]) {
+void refazer(int alt, int lar, int img[alt][lar]) {
+	// Checa se há alterações desfeitas a refazer
+	if (a.atual == a.fim) {
+		printf("Nao ha alteracoes a serem refeitas\n");
+		_getch();
+		return;
+	}
+
+	int tmp_cor = img[a.pixels[a.atual][2]][a.pixels[a.atual][1]];
+
+	// Refaz a alteração nas coordenadas (x a.pixels[a.atual][1]], y a.pixels[a.atual][2]) com a cor em a.pixels[a.atual][0]
+	printf("\nRefazendo (x %d, y %d) com a cor %d (era %d)\n", a.pixels[a.atual][1], a.pixels[a.atual][2], a.pixels[a.atual][0], img[a.pixels[a.atual][2]][a.pixels[a.atual][1]]);
+	img[a.pixels[a.atual][2]][a.pixels[a.atual][1]] = a.pixels[a.atual][0];
+
+	a.pixels[a.atual][0] = tmp_cor;
+
+	// Altera o a.atual uma alteracao para frente (avança o que o último desfazer voltou)
+	if (a.atual < MAX_ALTERACOES - 1)
+		a.atual++;
+	else
+		a.atual = 0;
+}
+
+void salvar(int alt, int lar, int img[alt][lar]) {
 	// Lê o nome do arquivo
 	if (nomeArquivo[0] == '\0') {
 		do {
@@ -375,6 +467,7 @@ char *salvar(char *nomeArquivo, int alt, int lar, int img[alt][lar]) {
 			fflush(stdin);
 			fgets(nomeArquivo, sizeof nomeArquivo, stdin);
 		} while (nomeArquivo[0] == '\0');
+		*strchr(nomeArquivo, '\n') = '\0'; // Remove '\n' do final da string em nomeArquivo
 	}
 
 	// Prepara para criar e escrever no arquivo
@@ -382,23 +475,25 @@ char *salvar(char *nomeArquivo, int alt, int lar, int img[alt][lar]) {
 	char caminhoArquivo[71];
 	sscanf("./Imagens/", "%s", caminhoArquivo);
 	strncat(caminhoArquivo, nomeArquivo, 50);
-	strcat(caminhoArquivo, ".colorir438");
+	strcat(caminhoArquivo, ".colorir438"); // Adiciona ".colorir438" no final do nomeArquivo
 	FILE *arquivo = fopen(caminhoArquivo, "w");
 	if (arquivo == NULL) {
-		printf("\nNao foi possivel criar/abrir o arquivo, evite nomes longos e caracteres especiais ("); c(12); printf("\\ / * ? \" < > |"); c(15); printf(")");
+		printf("Nao foi possivel criar/abrir o arquivo, evite nomes longos e caracteres especiais ("); c(12); printf("\\ / * ? \" < > |"); c(15); printf(")");
 		_getch();
-		return "\0";
+		return;
 	}
 
 	// Escreve no arquivo
-	printf("Gravando valores em \"%s\"", caminhoArquivo);
-	fprintf(arquivo, "Colorir438 %d %d\n", lar, alt);
-	for (int i = 0; i < alt*lar; i++)
-		if (img[i/lar][i%alt] < 10)
-			fprintf(arquivo, "%c", img[i/lar][i%alt] + 48); // Converte do int (0-9) para (0-9)+48 = (48-57)ºdec = char ('0'-'9') (Apenas para melhor leitura externa)
-		else
-			fprintf(arquivo, "%c", img[i/lar][i%alt] + 55); // Converte do int (10-15) para (10-15)+55 = (65-70)ºdec = char ('A'-'F') (Apenas para melhor leitura externa)
+	printf("Gravando valores em \"%s\"\n", caminhoArquivo);
+	fprintf(arquivo, "Colorir438 %d %d", lar, alt);
+	for (int i = 0; i < alt; i++) {
+		fprintf(arquivo, "\n");
+		for (int j = 0; j < lar; j++)
+			if (img[i][j] < 10)
+				fprintf(arquivo, "%c", img[i][j] + 48); // Converte do int (0-9) para (0-9)+48 = (48-57)ºdec = char ('0'-'9') (Apenas para melhor leitura externa)
+			else
+				fprintf(arquivo, "%c", img[i][j] + 55); // Converte do int (10-15) para (10-15)+55 = (65-70)ºdec = char ('A'-'F') (Apenas para melhor leitura externa)
+	}
 	
 	fclose(arquivo);
-	return nomeArquivo;
 }
