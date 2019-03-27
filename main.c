@@ -177,7 +177,9 @@ void lerColorir438(FILE *arquivo) {
 
 	// Aviso para imagens grandes
 	if (lar > 60 || alt > 100) {
-		c(14); printf("\nA imagem eh grande (%dx%d), maximize o console e diminua a fonte caso necessario.", lar, alt);
+		c(14); printf("\nA imagem eh grande (%dx%d), eh recomendado maximizar a janela e diminuir o tamanho da fonte.", lar, alt);
+		if (lar > 200)
+			printf(" Os pixels talvez nao aparecerao na tela corretamente");
 		_getch();
 	}
 	
