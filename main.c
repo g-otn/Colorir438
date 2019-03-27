@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #define c _textcolor
 #define b _textbackground
-#define MAX_ALTERACOES 5
+#define MAX_ALTERACOES 50
 
 typedef struct FilaAlteracoes { // Fila circular que guarda as alteracoes nos pixels para desfazer/refazer
 	int pixels[MAX_ALTERACOES][3]; // Guarda os valores dos pixels [x, y, cor]
@@ -175,8 +175,10 @@ void lerColorir438(FILE *arquivo) {
 	c(7); printf("\nDimensoes: "); c(3); printf("%d", lar); c(7); printf("x"); c(3); printf("%d", alt);
 	_getch();
 
-	if (lar > 50) {
-		
+	// Aviso para imagens grandes
+	if (lar > 60 || alt > 100) {
+		c(14); printf("\nA imagem eh grande (%dx%d), maximize o console e diminua a fonte caso necessario.", lar, alt);
+		_getch();
 	}
 	
 	editar(alt, lar, img);
@@ -184,11 +186,11 @@ void lerColorir438(FILE *arquivo) {
 
 void lerBmp(FILE *arquivo) {
 	struct {
-		int imgDataStart; // Byte onde os dados da imagem começam
 		struct {
 			int alt;
 			int lar;
 		} tam; // Dimensões da imagem
+		int imgDataStart; // Byte onde os dados da imagem começam
 		int bitspp; // Bits por pixel (1, 4, 8, 16, 24 ou 32 bits) -> (2, 16 [txtcolor/cmd color], 256, RGB, RGBA) (2^n colors)
 	} meta;
 
@@ -229,7 +231,6 @@ void carregarExemplo(void) {
 		{11, 11, 11, 11, 2, 11, 11, 11, 11},
 		{6, 6, 6, 6, 6, 6, 6, 6, 6}
 	};
-
 	editar(9, 9, ex);
 }
 
@@ -282,7 +283,11 @@ void editar(int alt, int lar, int img[alt][lar]) {
 
 	do {
 		// Mostra informações sobre o arquivo e alterações
-		c(8); printf("Editando \""); c(7); printf("%s", nomeArquivo); c(8); printf("\" (%dx%d) ", lar, alt);
+		if (nomeArquivo[0] != '\0') {
+			c(8); printf("Editando \""); c(7); printf("%s", nomeArquivo); c(8); printf("\" (%dx%d) ", lar, alt);
+		} else {
+			c(8); printf("Editando nova imagem (%dx%d) ", lar, alt);
+		}
 		if (a.inicio <= a.atual)
 			printf("Desfazer: %d/%d ", a.atual - a.inicio, MAX_ALTERACOES);
 		else
@@ -291,15 +296,15 @@ void editar(int alt, int lar, int img[alt][lar]) {
 			printf("Refazer: %d", a.fim - a.atual);
 		else
 			printf("Refazer: %d", a.fim + (MAX_ALTERACOES - (a.atual - 1)));
-		printf("\natual: %d fim: %d inicio: %d", a.atual, a.fim, a.inicio);
 		
 		// [DEBUG Info] FilaAlteracoes
-		c(14); for (int i = 0; i < MAX_ALTERACOES; i++) {
-			printf("\n%d: [%d, %d, %d]", i, a.pixels[i][0], a.pixels[i][1], a.pixels[i][2]);
-			if (i == a.atual) printf(" <= atual");
-			if (i == a.inicio) printf(" <- inicio");
-			if (i == a.fim) printf(" <- fim");
-		} c(15);
+		// c(14); printf("\natual: %d fim: %d inicio: %d", a.atual, a.fim, a.inicio);
+		// for (int i = 0; i < MAX_ALTERACOES; i++) {
+		// 	printf("\n%d: [%d, %d, %d]", i, a.pixels[i][0], a.pixels[i][1], a.pixels[i][2]);
+		// 	if (i == a.atual) printf(" <= atual");
+		// 	if (i == a.inicio) printf(" <- inicio");
+		// 	if (i == a.fim) printf(" <- fim");
+		// } c(15);
 
 		// Lê o comando
 		c(7); printf("\nDigite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
@@ -363,27 +368,41 @@ void pintar(int preencher, int alt, int lar, int img[alt][lar]) {
 	}
 	printf("\n");
 
+	char entrada[8];
+
 	// Lê a cor do pixel
 	int cor;
-	char entrada[7];
 	do {
 		printf("Escolha uma cor (0-15): ");
 		fflush(stdin);
 		fgets(entrada, sizeof entrada, stdin);
-	} while (sscanf(entrada, "%d\n", &cor) != 1);
+		
+		if (sscanf(entrada, "%d\n", &cor) == 1) { // Checagem de entrada inválida
+			if (cor < 0 || cor > 15) { // Checagem de cor inválida
+				printf("Cor invalida ("); c(12); printf("%d", cor); c(15); printf("). Escolha uma cor de "); c(3); printf("0 a 15", lar - 1); c(15); printf("\n");
+			} else
+				break;
+		}
+	} while (1);
 
-	entrada[0] = '\0';
-	entrada[1] = '\0';
-	entrada[2] = '\0';
+	for (int i = 0; i < 8; i++)
+		entrada[i] = '\0';
 	
 	// Lê as coordenadas do pixel
 	int x, y;
 	do {
-		printf("Digite as coordenadas do pixel a ser alterado ("); c(3); printf("x y"); c(15); printf("), separadas por espaco (Ex: \""); c(3); printf("32 10"); c(15); printf("\"): ");
+		printf("Digite as coordenadas do pixel ("); c(3); printf("x y"); c(15); printf(") a ser pintado, separadas por espaco (Ex: \""); c(3); printf("32 10"); c(15); printf("\"): ");
 		fflush(stdin);
 		fgets(entrada, sizeof entrada, stdin);
-		// adicionar restricao tamanho
-	} while (sscanf(entrada, "%d %d\n", &x, &y) != 2);
+
+		// Checagem de coordenada inválida
+		if (sscanf(entrada, "%d %d\n", &x, &y) == 2) { // Checagem de entrada inválida
+			if (x < 0 || x >= lar || y < 0 || y >= alt) { // Checagem de coordenada inválida
+				printf("Coordenada invalida ("); c(12); printf("%d %d", x, y); c(15); printf("). Use uma posicao x de "); c(3); printf("0 a %d", lar - 1); c(15); printf(" e uma posicao y de "); c(3); printf("0 a %d", alt - 1); c(15); printf("\n");
+			} else
+				break;
+		}
+	} while (1);
 
 	// Armazena a alteração
 	a.pixels[a.atual][0] = img[y][x];
@@ -409,7 +428,93 @@ void linha(int alt, int lar, int img[alt][lar]) {
 	for (int i = 1; i < 16; i++) {
 		c(i); printf(" %d", i);
 	}
+	printf("\n");
 
+	char entrada[8];
+
+	// Lê a cor do pixel
+	int cor;
+	do {
+		printf("Escolha uma cor (0-15): ");
+		fflush(stdin);
+		fgets(entrada, sizeof entrada, stdin);
+		
+		if (sscanf(entrada, "%d\n", &cor) == 1) { // Checagem de entrada inválida
+			if (cor < 0 || cor > 15) { // Checagem de cor inválida
+				printf("Cor invalida ("); c(12); printf("%d", cor); c(15); printf("). Escolha uma cor de "); c(3); printf("0 a 15", lar - 1); c(15); printf("\n");
+			} else
+				break;
+		}
+	} while (1);
+
+	for (int i = 0; i < sizeof entrada; i++)
+		entrada[i] = '\0';
+	
+	// Lê as coordenadas da linha
+	int x1, y1;
+	do {
+		printf("Digite as coordenadas do comeco da reta ("); c(3); printf("x1 y1"); c(15); printf("), separadas por espaco (Ex: \""); c(3); printf("2 10"); c(15); printf("\"): ");
+		fflush(stdin);
+		fgets(entrada, sizeof entrada, stdin);
+
+		if (sscanf(entrada, "%d %d\n", &x1, &y1) == 2) { // Checagem de entrada inválida
+			if (x1 < 0 || x1 >= lar || y1 < 0 || y1 >= alt) { // Checagem de coordenada inválida
+				printf("Coordenada invalida ("); c(12); printf("%d %d", x1, y1); c(15); printf("). Use uma posicao x de "); c(3); printf("0 a %d", lar - 1); c(15); printf(" e uma posicao y de "); c(3); printf("0 a %d", alt - 1); c(15); printf("\n");
+			} else
+				break;
+		}
+	} while (1);
+
+	for (int i = 0; i < 8; i++)
+		entrada[i] = '\0';
+
+	int x2, y2;
+	do {
+		printf("Digite as coordenadas do final da reta ("); c(3); printf("x2 y2"); c(15); printf("), separadas por espaco (Ex: \""); c(3); printf("2 10"); c(15); printf("\"): ");
+		fflush(stdin);
+		fgets(entrada, sizeof entrada, stdin);
+
+		if (sscanf(entrada, "%d %d\n", &x2, &y2) == 2) { // Checagem de entrada inválida
+			if (x2 < 0 || x2 >= lar || y2 < 0 || y2 >= alt) { // Checagem de coordenada inválida
+				printf("Coordenada invalida ("); c(12); printf("%d %d", x2, y2); c(15); printf("). Use uma posicao x de "); c(3); printf("0 a %d", lar - 1); c(15); printf(" e uma posicao y de "); c(3); printf("0 a %d", alt - 1); c(15); printf("\n");
+			} else
+				break;
+		}
+	} while (1);
+
+	// Calcula os valores usados no calculo dos pixels pertencentes a linha
+	struct {
+		struct {
+			int x;
+			int y;
+		} dist;
+		float passo;
+	} d; // Dados da Linha
+
+	if (x1 < x2) {
+		d.dist.x = x2 - x1;
+		d.dist.y = y2 - y1;
+	} else {
+		d.dist.x = x1 - x2;
+		d.dist.y = y1 - y2;
+	}
+	if (d.dist.x < d.dist.y) {
+		d.passo = (float)d.dist.x / (float)d.dist.y;
+	} else {
+		d.passo = (float)d.dist.y / (float)d.dist.x;
+	}
+
+	// [DEBUG] Checagem de valores
+	c(14);
+	if (x1 < x2) {
+		printf("x1(%d) eh menor que x2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
+		printf("\npixels ate x2: %d y2: %d, a cada 1x, andar %fy", d.dist.x, d.dist.y, d.passo);
+	} else {
+		printf("x2(%d) eh menor que x1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
+		printf("\npixels ate x1: %d y1: %d, a cada 1x, andar %fy", d.dist.x, d.dist.y, d.passo);
+	}
+	c(15);
+	_getch();
 }
 
 void desfazer(int alt, int lar, int img[alt][lar]) {
