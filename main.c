@@ -1,15 +1,17 @@
 /*
-	Colorir438 - Baseado no programa do slide do Prof. Dr. Silvio do Lago Pereira sobre Coloracao (IED-001) do dpto. de TI da FATEC-SP
-    Gabriel Otani Pereira - Mar 2019
+	Colorir438 - Cria, edita e mostra imagens no console
+	Baseado no programa do slide do Prof. Dr. Silvio do Lago Pereira sobre Coloracao (IED-001) do dpto. de TI da FATEC-SP
+    Criador por Gabriel Otani Pereira - Mar 2019
 */
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #define c _textcolor
 #define b _textbackground
-#define MAX_ALTERACOES 50
+#define MAX_ALTERACOES 1 + 50
 
 typedef struct FilaAlteracoes { // Fila circular que guarda as alteracoes nos pixels para desfazer/refazer
 	int pixels[MAX_ALTERACOES][3]; // Guarda os valores dos pixels [x, y, cor]
@@ -291,13 +293,13 @@ void editar(int alt, int lar, int img[alt][lar]) {
 			c(8); printf("Editando nova imagem (%dx%d) ", lar, alt);
 		}
 		if (a.inicio <= a.atual)
-			printf("Desfazer: %d/%d ", a.atual - a.inicio, MAX_ALTERACOES);
+			printf("Desfazer: %d/%d ", a.atual - a.inicio, MAX_ALTERACOES - 1);
 		else
-			printf("Desfazer: %d/%d ", a.atual + (MAX_ALTERACOES - (a.inicio - 1)), MAX_ALTERACOES);
+			printf("Desfazer: %d/%d ", a.atual + (MAX_ALTERACOES - a.inicio), MAX_ALTERACOES - 1);
 		if (a.atual <= a.fim)
 			printf("Refazer: %d", a.fim - a.atual);
 		else
-			printf("Refazer: %d", a.fim + (MAX_ALTERACOES - (a.atual - 1)));
+			printf("Refazer: %d", a.fim + (MAX_ALTERACOES - a.atual));
 		
 		// [DEBUG Info] dados da FilaAlteracoes
 		// c(14); printf("\natual: %d fim: %d inicio: %d", a.atual, a.fim, a.inicio);
@@ -314,7 +316,7 @@ void editar(int alt, int lar, int img[alt][lar]) {
 		printf("\n");
 
 		// Filtra o comando
-		switch (cmd) {
+		switch (tolower(cmd)) {
 			case 'a': // A - Mensagem de Ajuda: Exibe comandos e suas sintaxes
 				exibirComandos();
 				break;
@@ -325,7 +327,9 @@ void editar(int alt, int lar, int img[alt][lar]) {
 				pintar(1, alt, lar, img);
 				break;
 			case 'l': // L - Linha: Desenha uma linha na imagem
-				linha(alt, lar, img);
+				printf("Nao eh possivel desfazer uma linha, continuar? [s/n]");
+				if (_getch() == 's')
+					linha(alt, lar, img);
 				break;
 			case 'd': // D - Desfazer: Desfaz ultima modificação -
 				desfazer(alt, lar, img);
@@ -410,7 +414,6 @@ void pintar(int preencher, int alt, int lar, int img[alt][lar]) {
 	a.pixels[a.atual][0] = img[y][x];
 	a.pixels[a.atual][1] = x;
 	a.pixels[a.atual][2] = y;
-
 	// Gerencia os índices do armazenamento
 	a.atual++;
 	if (a.atual == MAX_ALTERACOES)
@@ -494,28 +497,30 @@ void linha(int alt, int lar, int img[alt][lar]) {
 	} d; // Dados da Linha
 
 	// Cálcula a distância vertical e horizontal (co, ca)
-	if (x1 < x2) { // Substitui o Math.abs(x1-x2) e Math.abs(y1-y2)
-		d.dist.x = x2 - x1;
-		d.dist.y = y2 - y1;
-	} else {
-		d.dist.x = x1 - x2;
-		d.dist.y = y1 - y2;
-	}
-	c(14); printf("Distancia horizontal(x): %d vertical(y): %d\n", d.dist.x, d.dist.y); c(15);
+	d.dist.x = abs(x1 - x2);
+	d.dist.y = abs(y1 - y2);
+	c(14); printf("Distancia horizontal(x): %d vertical(y): %d", d.dist.x, d.dist.y); c(15);
 
-	// Decide por qual eixo iterar (impede d.passo de ser >= 1, pulando pixels (ex: a cada 1x, andar 4y, deixando 3 pixels sem pintar)) // arrumar
+	// Decide por qual eixo iterar (impede d.passo de ser >= 1, pulando pixels (ex: a cada 1x, andar 4y: deixa 3 pixels sem pintar))
 	if (d.dist.x <= d.dist.y) {
+		// Primeiro calculo de d.passo, sem correcao de direcao
 		d.passo = (float)d.dist.x / (float)d.dist.y;
-		// [DEBUG] Checagem de valores
-		c(6);
+
+		// Correção de direção caso seja da esquerda para a direita
+		if (x1 > x2)
+			d.passo *= -1;
+		c(14); printf("\nd.dist.x(%d) <= d.dist.y (%d), iterando pelo y e adicionando d.passo(%f) ao x", d.dist.x, d.dist.y, d.passo);
+		
+		// Correção de direção caso seja da de baixo para cima
 		if (y1 < y2) {
-			printf("y1(%d) eh menor que y2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
-			printf("\npixels ate x2: %d y2: %d, a cada 1y, andar %fx", d.dist.x, d.dist.y, d.passo);
+			printf("\nRegra de posicao: y1(%d) eh menor que y2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", y1, y2, x1, y1, x2, y2);
+			printf("\nRegra de preenchimento: a cada 1y, andar %fx", d.passo);
 		} else {
-			printf("y2(%d) eh menor que y1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
-			printf("\npixels ate x1: %d y1: %d, a cada 1y, andar %fx", d.dist.x, d.dist.y, d.passo);
+			d.passo *= -1;
+			printf("\nRegra de posicao: y2(%d) eh menor/= que y1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", y2, y1, x2, y2, x1, y1);
+			printf("\nRegra de preenchimento: a cada 1y, andar %fx", d.passo);
 		}
-		c(15);
+		c(6);
 
 		// Pinta os pixels
 		float x;
@@ -523,31 +528,37 @@ void linha(int alt, int lar, int img[alt][lar]) {
 		if (y1 < y2) {
 			x = x1 + 0.5; // Arredondamento para cima (<0.5) e para baixo (>=0.5), já que ex: (int)0.5 = 0; (int)0.9 = 0; então (int)(0.5+0.5) = 1 e (int)(0.9+0.5) = 1
 			for (y = y1; y <= y2; y++) {
-				printf("\n(y1(%d) < y2(%d))\tx: %f y: %d", y1, y2, x, y);
+				printf("\nx: %f y: %d", x, y);
 				img[y][(int)x] = cor;
 				x += d.passo;
 			}
 		} else {
 			x = x2 + 0.5;
 			for (y = y2; y <= y1; y++) {
-				printf("\n(y2(%d) < y1(%d))\tx: %f y: %d", x1, x2, x, y);
+				printf("\nx: %f y: %d", x, y);
 				img[y][(int)x] = cor;
 				x += d.passo;
 			}
 		}
 	} else {
+		// Primeiro calculo de d.passo, sem correcao de direcao
 		d.passo = (float)d.dist.y / (float)d.dist.x;
+
+		// Correção de direção caso seja da de baixo para cima
+		if (y1 > y2)
+			d.passo *= -1;
+		c(14); printf("\nd.dist.y(%d) < d.dist.x (%d), iterando pelo x e adicionando d.passo(%f) ao y", d.dist.y, d.dist.x, d.passo);
 		
-		// [DEBUG] Checagem de valores
-		c(6);
+		// Correção de direção caso seja da esquerda para a direita
 		if (x1 < x2) {
-			printf("x1(%d) eh menor que x2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
-			printf("\npixels ate x2: %d y2: %d, a cada 1x, andar %fy", d.dist.x, d.dist.y, d.passo);
+			printf("\nRegra de posicao: x1(%d) eh menor que x2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
+			printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
 		} else {
-			printf("x2(%d) eh menor que x1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
-			printf("\npixels ate x1: %d y1: %d, a cada 1x, andar %fy", d.dist.x, d.dist.y, d.passo);
+			d.passo *= -1;
+			printf("\nRegra de posicao: x2(%d) eh menor/= que x1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
+			printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
 		}
-		c(15);
+		c(6);
 
 		// Pinta os pixels
 		int x;
@@ -555,20 +566,20 @@ void linha(int alt, int lar, int img[alt][lar]) {
 		if (x1 < x2) {
 			y = y1 + 0.5;
 			for (x = x1; x <= x2; x++) {
-				printf("\n(x1(%d) < x2(%d))\tx: %d y: %f", x1, x2, x, y);
+				printf("\nx: %d y: %f", x, y);
 				img[(int)y][x] = cor;
 				y += d.passo;
 			}
 		} else {
 			y = y2 + 0.5;
 			for (x = x2; x <= x1; x++) {
-				printf("\n(x2(%d) < x1(%d))\tx: %d y: %f", x1, x2, x, y);
+				printf("\nx: %d y: %f", x, y);
 				img[(int)y][x] = cor;
 				y += d.passo;
 			}
 		}
 	}
-
+	
 	_getch();
 }
 
