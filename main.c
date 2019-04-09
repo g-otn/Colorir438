@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <conio.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -140,6 +141,7 @@ void abrirArquivo(void) {
 		printf("Formato identificado: .Colorir438 ("); c(2); printf("%s", filtro); c(15); printf(")");
 		lerColorir438(arquivo); // ler como .Colorir438
 	} else if (strstr(filtro, "BM") != NULL) { // "BM" está contido em filtro
+		filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
 		printf("Formato identificado: .bmp ("); c(2); printf("%s", filtro); c(15); printf(")");
 		lerBmp(arquivo); // ler como .bmp
 	} else {
@@ -189,38 +191,70 @@ void lerColorir438(FILE *arquivo) {
 }
 
 void lerBmp(FILE *arquivo) {
+	// Guarda metadados recuperados do arquivo
 	struct {
 		struct {
 			int alt;
 			int lar;
 		} tam; // Dimensões da imagem
-		int imgDataStart; // Byte onde os dados da imagem começam
-		int bitspp; // Bits por pixel (1, 4, 8, 16, 24 ou 32 bits) -> (2, 16 [txtcolor/cmd color], 256, RGB, RGBA) (2^n colors)
+		int dadosImgIni; // Byte onde os dados da imagem começam
+		int bitspp; // Bits por pixel (1, 4, 8, 16, 24 ou 32 bits)
+		int paddingLinha; // Espaçamento em bytes até a próxima linha de pixels
 	} meta;
 
-	// Recupera informações para leitura do arquivo
+	// Recupera informações para leitura dos pixels
+	// Lê como Windows BITMAPINFOHEADER
 	fseek(arquivo, 10, SEEK_SET);
-	meta.imgDataStart = fgetc(arquivo);
+	meta.dadosImgIni = fgetc(arquivo);
 	fseek(arquivo, 18, SEEK_SET);
 	meta.tam.lar = fgetc(arquivo);
-	fseek(arquivo, 20, SEEK_SET);
+	fseek(arquivo, 22, SEEK_SET);
 	meta.tam.alt = fgetc(arquivo);
 	fseek(arquivo, 28, SEEK_SET);
+	meta.bitspp = fgetc(arquivo);
 	
 	// Lê e armazena os valores dos pixels
-	int i = 0;
-	while(!feof(arquivo)) {
+	rewind(arquivo);
+	for (int i = 0; !feof(arquivo); i++)
 		printf("\nbyte #%d\tint: %d", i, fgetc(arquivo)); // [DEBUG Info] .bmp bytes
-		i++;
-	}
-	fclose(arquivo);
 
 	// [DEBUG Info] .bmp metadados
-	c(13); printf("Metadados do .bmp");
+	c(13); printf("\nMetadados do .bmp");
 	c(7); printf("\nDimensoes: "); c(3); printf("%dx%d", meta.tam.lar, meta.tam.alt);
-	c(7); printf("\nInicio dos valores dos pixels: "); c(3); printf("%d", meta.imgDataStart); 
+	c(7); printf("\nInicio dos valores dos pixels: "); c(3); printf("%d", meta.dadosImgIni); 
 	c(7); printf("\nBits por pixel: "); c(3); printf("%d", meta.bitspp);
+
+	c(14);
+	fseek(arquivo, 2, SEEK_SET);
+	printf("\n#2: tamanho arquivo: %d", fgetc(arquivo));
+	fseek(arquivo, 14, SEEK_SET);
+	printf("\n#14: tamanho DIB header: %d", fgetc(arquivo));
+	fseek(arquivo, 34, SEEK_SET);
+	printf("\n#34: tamanho imagem (rowsize*altura): %d", fgetc(arquivo));
+	fseek(arquivo, 46, SEEK_SET);
+	printf("\n#46: numero de cores: %d", fgetc(arquivo));
+
+	if (meta.bitspp <= 8)
+		printf("\nBits por pixel (color depth) <= 8 (%d), color table existente", meta.bitspp);
+
+	// Dados dos pixels
+	int paddingLinha = (int)(floorf((meta.bitspp*meta.tam.lar+31)/32)*4) - meta.tam.lar; // RowSize - largura da imagem
+	printf("\nrowsize: %d\npadding da linha: %d", paddingLinha + meta.tam.lar, paddingLinha);
+	printf("\nArray de dados dos pixels da imagem:");
+	fseek(arquivo, meta.dadosImgIni, SEEK_SET);
+	c(6);
+	for (int y = meta.tam.alt - 1; y >= 0; y--) {
+		for (int x = 0; x < meta.tam.lar; x++) {
+			printf("\n(%d, %d): %d ", x, y, fgetc(arquivo));
+		}
+		printf("\npulando padding:");
+		for (int p = 0; p < paddingLinha; p++)
+			printf(" %d", fgetc(arquivo));
+		//fseek(arquivo, paddingLinha, SEEK_CUR); // Pula o padding da linha no arquivo
+	}
+
 	_getch();
+	fclose(arquivo);
 }
 
 void carregarExemplo(void) {
