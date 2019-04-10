@@ -160,16 +160,21 @@ void lerColorir438(FILE *arquivo) {
 	// Lê os valores dos pixels
 	int img[alt][lar];
 	fseek(arquivo, 2, SEEK_CUR);
-	for (int i = 0; i < alt*lar; i++) {
-		char c = fgetc(arquivo);
-		if (c == '\n')
-			i--;
-		else if (c < 58) {
-			img[i/lar][i%alt] = c - 48; // Converte do int (48...57) = char ('0'...'9') para int (48...57)-48 = (0...9)
-			//printf("\nbyte #%d: int %d char %c\tint-48 %d", i, c, c, c-48); 
-		} else {
-			img[i/lar][i%alt] = c - 55; // Converte do int (65...70)+55 = char ('A'...'F') para int (65...70)-55 = (10...16)
-			//printf("\nbyte #%d: int %d char %c\tint-55 %d", i, c, c, c-55); 
+	for (int i = 0; i < alt; i++) {
+		for (int j = 0; j < lar; j++) {
+			char ch = fgetc(arquivo);
+			if (ch == '\n') {
+				printf("ch\\n: %c", ch);
+				ch = fgetc(arquivo);}
+			if (ch < 58) {
+				img[i][j] = ch - 48; // Converte do int (48...57) = char ('0'...'9') para int (48...57)-48 = (0...9)
+				c(6); printf("\nbyte #%d (%d, %d): int %d char %c\tint-48 ", i*lar+j, i, j, ch, ch);
+				c(ch-48); printf("%d", img[i][j]);
+			} else {
+				img[i][j] = ch - 55; // Converte do int (65...70)+55 = char ('A'...'F') para int (65...70)-55 = (10...16)
+				c(6); printf("\nbyte #%d (%d, %d): int %d char %c\tint-55 ", i*lar+j, i, j, ch, ch);
+				c(ch-55); printf("%d", img[i][j]);
+			}
 		}
 	}
 	fclose(arquivo);
