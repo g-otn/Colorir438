@@ -1,7 +1,7 @@
 /*
-	Colorir438 - Cria, edita e mostra imagens no console
+	Colorir438 - Cria, edita e mostra pequenas imagens no console
 	Baseado no programa do slide do Prof. Dr. Silvio do Lago Pereira sobre Coloracao (IED-001) do dpto. de TI da FATEC-SP
-    Criador por Gabriel Otani Pereira - Mar 2019
+    Criado por Gabriel Otani Pereira - 2019
 */
 #include <stdio.h>
 #include <conio.h>
@@ -108,7 +108,7 @@ void abrirArquivo(void) {
 	// Lê o caminho do arquivo
 	char caminhoArquivo[100];
 	do {
-		c(7); printf("Digite o nome ou caminho do arquivo ("); c(3); printf("exemplo.colorir438, ./Imagens/imagem.bmp, C:\\Users\\..."); c(15); printf("): \n");
+		c(7); printf("Digite o nome ou caminho do arquivo ("); c(3); printf("exemplo.colorir438, ./demo/imagem.bmp, C:\\Users\\..."); c(15); printf("): \n");
 		c(15);
 		fflush(stdin);
 		fgets(caminhoArquivo, sizeof caminhoArquivo, stdin);
@@ -186,9 +186,7 @@ void lerColorir438(FILE *arquivo) {
 
 	// Aviso para imagens grandes
 	if (lar > 60 || alt > 100) {
-		c(14); printf("\nA imagem eh grande (%dx%d), eh recomendado maximizar a janela e diminuir o tamanho da fonte.", lar, alt);
-		if (lar > 200)
-			printf(" Os pixels talvez nao aparecerao na tela corretamente");
+		c(14); printf("\nA imagem eh grande (%dx%d), eh recomendado maximizar a janela e diminuir o tamanho da fonte. Os pixels talvez nao aparecerao na tela corretamente", lar, alt);
 		_getch();
 	}
 	
@@ -400,7 +398,7 @@ void exibirComandos(void) {
 	c(11); printf("\n  [l]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
 	c(11); printf("\n  [d]"); c(10); printf(" Desfazer"); c(7); printf(": Desfaz a ultima modificacao na imagem");
 	c(11); printf("\n  [r]"); c(10); printf(" Refazer"); c(7); printf(": Refaz a ultima modificacao desfeita na imagem");
-	c(11); printf("\n\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as reguas esquerda e superior");
+	c(11); printf("\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as reguas esquerda e superior");
 	c(11); printf("\n  [g]"); c(10); printf(" Gravar"); c(7); printf(": Salva a imagem em um arquivo");
 	c(11); printf("\n  [n]"); c(10); printf(" reNomear"); c(7); printf(": Renomeia a imagem e salva em um arquivo");
 	c(11); printf("\n  [s]"); c(10); printf(" Sair"); c(7); printf(": Sai do modo de edicao e retorna ao menu\n");
@@ -586,16 +584,16 @@ void linha(int alt, int lar, int img[alt][lar]) {
 		// Correção de direção caso seja da de baixo para cima
 		if (y1 > y2)
 			d.passo *= -1;
-		c(14); printf("\nd.dist.y(%d) < d.dist.x (%d), iterando pelo x e adicionando d.passo(%f) ao y", d.dist.y, d.dist.x, d.passo);
+		c(14); //printf("\nd.dist.y(%d) < d.dist.x (%d), iterando pelo x e adicionando d.passo(%f) ao y", d.dist.y, d.dist.x, d.passo);
 		
 		// Correção de direção caso seja da esquerda para a direita
 		if (x1 < x2) {
-			printf("\nRegra de posicao: x1(%d) eh menor que x2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
-			printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
+			//printf("\nRegra de posicao: x1(%d) eh menor que x2(%d), indo de [x1y1](%d, %d) para [x2,y2](%d, %d)", x1, x2, x1, y1, x2, y2);
+			//printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
 		} else {
 			d.passo *= -1;
-			printf("\nRegra de posicao: x2(%d) eh menor/= que x1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
-			printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
+			//printf("\nRegra de posicao: x2(%d) eh menor/= que x1(%d), indo de [x2y2](%d, %d) para [x1,y1](%d, %d)", x2, x1, x2, y2, x1, y1);
+			//printf("\nRegra de preenchimento: a cada 1x, andar %fy", d.passo);
 		}
 		c(6);
 
@@ -605,21 +603,21 @@ void linha(int alt, int lar, int img[alt][lar]) {
 		if (x1 < x2) {
 			y = y1 + 0.5;
 			for (x = x1; x <= x2; x++) {
-				printf("\nx: %d y: %f", x, y);
+				//printf("\nx: %d y: %f", x, y);
 				img[(int)y][x] = cor;
 				y += d.passo;
 			}
 		} else {
 			y = y2 + 0.5;
 			for (x = x2; x <= x1; x++) {
-				printf("\nx: %d y: %f", x, y);
+				//printf("\nx: %d y: %f", x, y);
 				img[(int)y][x] = cor;
 				y += d.passo;
 			}
 		}
 	}
 	
-	_getch();
+	//_getch();
 }
 
 void desfazer(int alt, int lar, int img[alt][lar]) {
@@ -685,7 +683,7 @@ void salvar(int alt, int lar, int img[alt][lar]) {
 	char caminhoArquivo[71];
 	sscanf("./Imagens/", "%s", caminhoArquivo);
 	strncat(caminhoArquivo, nomeArquivo, 50);
-	strcat(caminhoArquivo, ".colorir438"); // Adiciona ".colorir438" no final do nomeArquivo
+	strcat(caminhoArquivo, ".c438"); // Adiciona ".c438" no final do nomeArquivo
 	FILE *arquivo = fopen(caminhoArquivo, "w");
 	if (arquivo == NULL) {
 		printf("Nao foi possivel criar/abrir o arquivo, evite nomes longos e caracteres especiais ("); c(12); printf("\\ / * ? \" < > |"); c(15); printf(")");
