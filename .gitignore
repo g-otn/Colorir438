@@ -1,0 +1,10 @@
+.vscode/
+demo/
+
+# Pelles C project generated files
+output/
+*.ppx
+*.tag
+
+# Compiled project
+*.exe
