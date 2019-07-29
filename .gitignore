@@ -1,0 +1,9 @@
+.vscode/
+
+# Arquivos gerados durante a compilação pelo Pelles C
+build/
+*.ppx
+*.tag
+
+# Executáveis
+bin/
