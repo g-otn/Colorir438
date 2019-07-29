@@ -1,9 +1,9 @@
-#include "../include/colorir438.h"
+#include "../include/imagem.h"
 #include <stdlib.h>
 
-Colorir438 colorir438(int alt, int lar)
+Imagem imagem(int alt, int lar)
 {
-    Colorir438 img;
+    Imagem img;
 
     img.alt = alt;
     img.lar = lar;
@@ -14,13 +14,13 @@ Colorir438 colorir438(int alt, int lar)
     return img;
 }
 
-Colorir438 alterarResolucao(Colorir438 img, Alteracao alteracao, Direcao direcao)
+Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
 {
-    Colorir438 novaImg;
+    Imagem novaImg;
 
     if (direcao == VERTICAL)
     {
-        novaImg = colorir438(img.alt + alteracao, img.lar);
+        novaImg = imagem(img.alt + alteracao, img.lar);
 
         int menorAlt = alteracao == DIMINUIR ? novaImg.alt : img.alt;
         for (int y = 0; y < menorAlt; y++)
@@ -32,7 +32,7 @@ Colorir438 alterarResolucao(Colorir438 img, Alteracao alteracao, Direcao direcao
     }
     else
     {
-        novaImg = colorir438(img.alt, img.lar + alteracao);
+        novaImg = imagem(img.alt, img.lar + alteracao);
 
         int menorLar = alteracao == DIMINUIR ? novaImg.lar : img.lar;
         for (int y = 0; y < novaImg.alt; y++)

@@ -1,13 +1,13 @@
 #include <stdlib.h>
 
-typedef struct colorir438_t
+typedef struct imagem_t
 {
     unsigned int alt; // Altura
     unsigned int lar; // Largura
     int **pixels;
-} Colorir438;
+} Imagem;
 
-Colorir438 colorir438(int alt, int lar);
+Imagem imagem(int alt, int lar);
 
 typedef enum direcao_t
 {
@@ -21,4 +21,4 @@ typedef enum alteracao_t
     DIMINUIR = -1
 } Alteracao;
 
-Colorir438 alterarResolucao(Colorir438 img, Alteracao alteracao, Direcao direcao);
+Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
