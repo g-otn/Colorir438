@@ -32,7 +32,7 @@ Imagem criarImagem(int alt, int lar)
     img.lar = lar;
     img.pixels = (int **)malloc(alt * sizeof(int *));
     for (int y = 0; y < alt; y++)
-        img.pixels[y] = (int *)malloc(lar * sizeof(int));
+        img.pixels[y] = (int *)calloc(lar, sizeof(int));
 
     return img;
 }
