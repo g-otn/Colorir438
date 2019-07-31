@@ -84,8 +84,14 @@ void desenharImagem(Imagem img, int desenharRegua)
 
 Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
 {
+    // Restrição para imagens não ficarem menores que 1x1
+    if (alteracao == DIMINUIR)
+        if ((img.alt == 1 && direcao == VERTICAL) || (img.lar == 1 && direcao == HORIZONTAL))
+            return img;
+
     Imagem novaImg;
 
+    // Copia os pixels de img para novaImg, que possui alt/lar diferente(s))
     if (direcao == VERTICAL)
     {
         novaImg = criarImagem(img.alt + alteracao, img.lar);
@@ -95,6 +101,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
             for (int x = 0; x < novaImg.lar; x++)
                 novaImg.pixels[y][x] = img.pixels[y][x];
         if (alteracao == AUMENTAR)
+            // Preenche a linha adicionada
             for (int x = 0; x < novaImg.lar; x++)
                 novaImg.pixels[novaImg.alt - 1][x] = 15;
     }
@@ -107,6 +114,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
             for (int x = 0; x < menorLar; x++)
                 novaImg.pixels[y][x] = img.pixels[y][x];
         if (alteracao == AUMENTAR)
+            // Preenche a coluna adicionada
             for (int y = 0; y < novaImg.alt; y++)
                 novaImg.pixels[y][novaImg.lar - 1] = 15;
     }
