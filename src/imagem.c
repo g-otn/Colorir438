@@ -39,6 +39,8 @@ Imagem criarImagem(int alt, int lar)
 
 void desenharImagem(Imagem img, int desenharRegua)
 {
+    system("cls");
+
     int y, x;
     desenharRegua *= -1; // 0 -> 0 e 1 -> -1, para o x e o y ficarem -1 e a régua ser exibida
 
@@ -119,6 +121,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
                 novaImg.pixels[y][novaImg.lar - 1] = 15;
     }
 
+    liberarImagem(&img);
     return novaImg;
 }
 
