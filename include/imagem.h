@@ -1,3 +1,6 @@
+#ifndef IMAGEM_H
+#define IMAGEM_H
+
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +19,7 @@ typedef struct imagem_t
 } Imagem;
 
 // Atribui alt e lar à nova Imagem e aloca memória para os pixels
-Imagem imagem(int alt, int lar);
+Imagem criarImagem(int alt, int lar);
 
 // Limpa a tela e escreve os pixels na tela com ou sem a régua guia
 void desenharImagem(Imagem img, int desenharRegua);
@@ -36,4 +39,7 @@ typedef enum alteracao_t
 // Copia os valores de img.pixels para uma nova Imagem com tamanho diferente em uma dimensão
 Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
 
+// Libera a memória alocada para os pixels
 void liberarImagem(Imagem *img);
+
+#endif

@@ -6,21 +6,25 @@
 int ultimoC = -1;
 int ultimoB = -1;
 
-void c(int cor) {
-    if (ultimoC != cor) {
+void c(int cor)
+{
+    if (ultimoC != cor)
+    {
         ultimoC = cor;
         _textcolor(cor);
     }
 }
 
-void b(int cor) {
-    if (ultimoB != cor) {
+void b(int cor)
+{
+    if (ultimoB != cor)
+    {
         ultimoB = cor;
         _textbackground(cor);
     }
 }
 
-Imagem imagem(int alt, int lar)
+Imagem criarImagem(int alt, int lar)
 {
     Imagem img;
 
@@ -80,42 +84,40 @@ void desenharImagem(Imagem img, int desenharRegua)
 
 Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
 {
-    printf("f");
     Imagem novaImg;
-    printf("g");
 
     if (direcao == VERTICAL)
     {
-        novaImg = imagem(img.alt + alteracao, img.lar);
-        printf("k");
+        novaImg = criarImagem(img.alt + alteracao, img.lar);
 
         int menorAlt = alteracao == DIMINUIR ? novaImg.alt : img.alt;
         for (int y = 0; y < menorAlt; y++)
             for (int x = 0; x < novaImg.lar; x++)
                 novaImg.pixels[y][x] = img.pixels[y][x];
-        printf("l");
         if (alteracao == AUMENTAR)
             for (int x = 0; x < novaImg.lar; x++)
                 novaImg.pixels[novaImg.alt - 1][x] = 15;
-        printf("m");
     }
     else // Horizontal
     {
-        novaImg = imagem(img.alt, img.lar + alteracao);
-        printf("h");
+        novaImg = criarImagem(img.alt, img.lar + alteracao);
 
         int menorLar = alteracao == DIMINUIR ? novaImg.lar : img.lar;
         for (int y = 0; y < novaImg.alt; y++)
             for (int x = 0; x < menorLar; x++)
                 novaImg.pixels[y][x] = img.pixels[y][x];
-        printf("i");
         if (alteracao == AUMENTAR)
-            for (int y = 0; y < novaImg.lar; y++)
+            for (int y = 0; y < novaImg.alt; y++)
                 novaImg.pixels[y][novaImg.lar - 1] = 15;
-        printf("j");
     }
 
     return novaImg;
 }
 
-void liberarImagem()
+void liberarImagem(Imagem *img)
+{
+    for (int y = 0; y < img->alt; y++)
+        free(img->pixels[y]);
+    free(img->pixels);
+    img->pixels = NULL;
+}
