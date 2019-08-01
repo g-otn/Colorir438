@@ -1,7 +1,9 @@
 #include "../include/imagem.h"
+#include "../include/colorir438.h"
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int ultimoC = -1;
 int ultimoB = -1;
@@ -39,7 +41,7 @@ Imagem criarImagem(int alt, int lar)
 
 void desenharImagem(Imagem img, int desenharRegua)
 {
-    system("cls");
+    //system("cls");
 
     int y, x;
     desenharRegua *= -1; // 0 -> 0 e 1 -> -1, para o x e o y ficarem -1 e a régua ser exibida
@@ -131,4 +133,46 @@ void liberarImagem(Imagem *img)
         free(img->pixels[y]);
     free(img->pixels);
     img->pixels = NULL;
+}
+
+Imagem lerImagem(char *caminhoArquivo)
+{
+    // Tenta abrir o arquivo
+	FILE *arquivo = fopen(caminhoArquivo, "r");
+
+	// Checagem de arquivo indisponível
+	if (!arquivo)
+    {
+        c(15); printf("Nao foi possivel abrir o arquivo em \"");
+        c(3); printf("%s", caminhoArquivo); c(15); printf("\"");
+		return criarImagem(0, 0);
+	}
+	// Checagem de arquivo vazio
+	fseek(arquivo, 0, SEEK_END);
+	if (ftell(arquivo) == 0)
+    {
+		printf("Arquivo em \""); c(3); printf("%s", caminhoArquivo); c(15); printf("\" vazio!");
+		_getch();
+		return criarImagem(0, 0);
+	}
+
+	// Filtrador de tipo de arquivo (.bmp ou .Colorir438)
+	rewind(arquivo);
+	char filtro[11];
+	fgets(filtro, sizeof filtro, arquivo); // Guarda os 10 primeiros chars do arquivo
+	if (strcmp(filtro, "Colorir438") == 0)
+    {
+		return lerColorir438(arquivo); // ler como .Colorir438
+	} 
+    else if (strstr(filtro, "BM") != NULL)
+    {
+		filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
+		printf("Formato identificado: .bmp ("); c(2); printf("%s", filtro); c(15); printf(")");
+		//return lerBmp(arquivo); // ler como .bmp
+	} 
+    else
+    {
+		printf("O arquivo nao esta em um formato suportado.");
+        return criarImagem(0, 0);
+	}
 }

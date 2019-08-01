@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int ultimoC; // Guarda a última cor utilizada em c()
 int ultimoB; // Guarda a última cor utilizada em b()
@@ -41,5 +42,8 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
 
 // Libera a memória alocada para os pixels
 void liberarImagem(Imagem *img);
+
+// Identifica o tipo de arquivo (.c438 ou .bmp) e retorna a Imagem lida do arquivo
+Imagem lerImagem(char *caminhoArquivo);
 
 #endif
