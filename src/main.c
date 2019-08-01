@@ -1,6 +1,12 @@
 #include "../include/imagem.h"
 #include "../include/colorir438.h"
 
+// Entra no loop do editor
+void editar(Imagem img);
+
+// Preenche os pixels de uma Imagem e abre ela no editor
+void carregarExemplo();
+
 int main(int argc, char **argv)
 {
 	c(15);
@@ -53,10 +59,39 @@ int main(int argc, char **argv)
 		case 2:
 			break;
 		case 3:
+			carregarExemplo();
 			break;
 		}
 	} while (opcao != 4);
 
 	c(15);
 	return 0;
+}
+
+void carregarExemplo()
+{
+	Imagem img = criarImagem(9, 9);
+	int florTmp[9][9] = {
+		{11, 11, 11, 11, 11, 11, 11, 11, 11},
+		{11, 11, 11, 6, 14, 6, 11, 11, 11},
+		{11, 11, 14, 14, 4, 14, 14, 11, 11},
+		{11, 11, 11, 14, 2, 14, 11, 11, 11},
+		{11, 11, 11, 2, 2, 11, 11, 11, 11},
+		{11, 11, 11, 11, 2, 11, 11, 11, 11},
+		{11, 11, 11, 11, 2, 2, 11, 11, 11},
+		{11, 11, 11, 11, 2, 11, 11, 11, 11},
+		{6, 6, 6, 6, 6, 6, 6, 6, 6}
+	};
+
+	for (int y = 0; y < 9; y++)
+		for (int x = 0; x < 9; x++)
+			img.pixels[y][x] = florTmp[y][x];
+
+	editar(img);
+}
+
+void editar(Imagem img)
+{
+	
+	liberarImagem(&img);
 }
