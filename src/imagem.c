@@ -78,8 +78,13 @@ void desenharImagem(Imagem img, int desenharRegua)
 
                 // Desenhando imagem (0, 0) até (img.lar, img.alt)
                 b(0);
-                c(img.pixels[y][x]);
-                printf("%c%c", 219, 219);
+                if (img.pixels[y][x] == ' ') // 32 / Espaço
+                    printf("  "); // "Transparente"
+                else 
+                {
+                    c(img.pixels[y][x]);
+                    printf("%c%c", 219, 219);
+                }
             }
         }
     }

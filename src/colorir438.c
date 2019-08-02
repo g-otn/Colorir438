@@ -27,8 +27,8 @@ Imagem lerColorir438(FILE *arquivo)
                 return img;
             }
 
-            // Ignora quebra de linha e espaço
-            while (ch == '\n' || ch == ' ')
+            // Ignora quebra de linha
+            while (ch == '\n')
                 ch = fgetc(arquivo);
 
             if (ch == EOF) { // Encerra leitura se acabou os caracteres
@@ -38,7 +38,9 @@ Imagem lerColorir438(FILE *arquivo)
                 return img;
             }
             
-            if (ch < 58)
+            if (ch == ' ')
+                img.pixels[y][x] = ' ';     // Marca como pixel transparente
+            else if (ch < 58)
                 img.pixels[y][x] = ch - 48; // Converte do int (48-57) = char ('0'-'9') para int (48-57)-48 = cores (0-9)
             else
                 img.pixels[y][x] = ch - 55; // Converte do int (65-70)+55 = char ('A'-'F') para int (65-70) - 55 = cores (10-16)
