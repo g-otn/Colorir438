@@ -6,12 +6,16 @@
 
 Imagem lerColorir438(FILE *arquivo)
 {
-    // Lê as dimensoes da imagem
-    int alt, lar;
+    int alt = 0, lar = 0, bg = '-';
+    
     fseek(arquivo, 11, SEEK_SET); // Pula para depois do "Colorir438 "
-    fscanf(arquivo, "%d %d", &lar, &alt);
-
-    Imagem img = criarImagem(alt, lar);
+    
+    Imagem img;
+    if (fscanf(arquivo, "%d %d %c", &lar, &alt, &bg) < 3 || alt < 1 || lar < 1) {
+        c(4); printf("O Colorir438 esta com valores invalidos.");
+        img = criarImagem(0, 0, '-');
+    } else
+        img = criarImagem(alt, lar, bg);
 
     // Lê os valores dos pixels
     fseek(arquivo, 2, SEEK_CUR); // Vai para o começo da 'matriz' de pixels
@@ -43,7 +47,7 @@ Imagem lerColorir438(FILE *arquivo)
             else if (ch < 58)
                 img.pixels[y][x] = ch - 48; // Converte do int (48-57) = char ('0'-'9') para int (48-57)-48 = cores (0-9)
             else
-                img.pixels[y][x] = ch - 55; // Converte do int (65-70)+55 = char ('A'-'F') para int (65-70) - 55 = cores (10-16)
+                img.pixels[y][x] = ch - 55; // Converte do int (65-70) = char ('A'-'F') para int (65-70) - 55 = cores (10-16)
         }
     
 

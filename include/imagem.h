@@ -16,11 +16,12 @@ typedef struct imagem_t
 {
     int alt; // Altura
     int lar; // Largura
+    int bg;  // Cor de fundo
     int **pixels;
 } Imagem;
 
-// Atribui alt e lar à nova Imagem e aloca memória para os pixels
-Imagem criarImagem(int alt, int lar);
+// Atribui os parâmetros à nova Imagem e aloca memória para os pixels
+Imagem criarImagem(int alt, int lar, int bg);
 
 // Limpa a tela e escreve os pixels na tela com ou sem a régua guia
 void desenharImagem(Imagem img, int desenharRegua);

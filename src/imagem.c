@@ -26,12 +26,13 @@ void b(int cor)
     }
 }
 
-Imagem criarImagem(int alt, int lar)
+Imagem criarImagem(int alt, int lar, int bg)
 {
     Imagem img;
 
     img.alt = alt;
     img.lar = lar;
+    img.bg = bg;
     img.pixels = (int **)malloc(alt * sizeof(int *));
     for (int y = 0; y < alt; y++)
         img.pixels[y] = (int *)calloc(lar, sizeof(int));
@@ -41,7 +42,7 @@ Imagem criarImagem(int alt, int lar)
 
 void desenharImagem(Imagem img, int desenharRegua)
 {
-    //system("cls");
+    system("cls");
 
     int y, x;
     desenharRegua *= -1; // 0 -> 0 e 1 -> -1, para o x e o y ficarem -1 e a régua ser exibida
@@ -70,6 +71,7 @@ void desenharImagem(Imagem img, int desenharRegua)
                 else
                     b(0);
                 printf("\n%2d", y % 100);
+                b(0);
             }
             else
             {
@@ -77,10 +79,15 @@ void desenharImagem(Imagem img, int desenharRegua)
                     printf("\n"); // Pula linha caso não entre no if de desenhar a régua onde a linha é pulada, pois o desenharRegua == 0
 
                 // Desenhando imagem (0, 0) até (img.lar, img.alt)
-                b(0);
-                if (img.pixels[y][x] == ' ') // 32 / Espaço
-                    printf("  "); // "Transparente"
-                else 
+                if (img.pixels[y][x] == ' ') // Transparente
+                    if (desenharRegua) // Editando
+                    {
+                        c(img.bg == '-' ? 0 : (img.bg < 58 ? img.bg - 48 : img.bg - 55)); // Transforma '0'-'9' em 0-9 e 'A'-'F' em 10-15
+                        printf("[]"); // Visível na edição
+                    } 
+                    else
+                        printf("  "); // Invisível na visualização
+                else                         // Cor
                 {
                     c(img.pixels[y][x]);
                     printf("%c%c", 219, 219);
@@ -103,7 +110,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
     // Copia os pixels de img para novaImg, que possui alt/lar diferente(s))
     if (direcao == VERTICAL)
     {
-        novaImg = criarImagem(img.alt + alteracao, img.lar);
+        novaImg = criarImagem(img.alt + alteracao, img.lar, img.bg);
 
         int menorAlt = alteracao == DIMINUIR ? novaImg.alt : img.alt;
         for (int y = 0; y < menorAlt; y++)
@@ -116,7 +123,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
     }
     else // Horizontal
     {
-        novaImg = criarImagem(img.alt, img.lar + alteracao);
+        novaImg = criarImagem(img.alt, img.lar + alteracao, img.bg);
 
         int menorLar = alteracao == DIMINUIR ? novaImg.lar : img.lar;
         for (int y = 0; y < novaImg.alt; y++)
@@ -150,7 +157,7 @@ Imagem lerImagem(char *caminhoArquivo)
     {
         c(15); printf("Nao foi possivel abrir o arquivo em \"");
         c(3); printf("%s", caminhoArquivo); c(15); printf("\"");
-		return criarImagem(0, 0);
+		return criarImagem(0, 0, '-');
 	}
 	// Checagem de arquivo vazio
 	fseek(arquivo, 0, SEEK_END);
@@ -158,7 +165,7 @@ Imagem lerImagem(char *caminhoArquivo)
     {
 		printf("Arquivo em \""); c(3); printf("%s", caminhoArquivo); c(15); printf("\" vazio!");
 		_getch();
-		return criarImagem(0, 0);
+		return criarImagem(0, 0, '-');
 	}
 
 	// Filtrador de tipo de arquivo (.bmp ou .Colorir438)
@@ -178,6 +185,6 @@ Imagem lerImagem(char *caminhoArquivo)
     else
     {
 		printf("O arquivo nao esta em um formato suportado.");
-        return criarImagem(0, 0);
+        return criarImagem(0, 0, '-');
 	}
 }

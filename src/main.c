@@ -15,12 +15,20 @@ int main(int argc, char **argv)
 	if (argc > 1) // Há argumentos
 	{
 		Imagem img = lerImagem(argv[1]);
-
-		if (img.alt < 1)
+		
+		if (img.alt > 0) { // Imagem válida
+			if (img.bg != '-') {
+				// Pinta o console inteiro com a cor de fundo (img.bg)
+				char comando[9];
+				sprintf(comando, "color %c0", img.bg);
+				system(comando);
+			}
 			desenharImagem(img, 0);
-
+		}
+		
 		liberarImagem(&img);
-		c(15);
+		_getch(); // Evita consoles de pop-up de fecharem sozinhos
+		system("color 07");
 		return 0; // Não abre o menu nem o editor
 	}
 
@@ -68,9 +76,9 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void carregarExemplo()
+void carregarExemplo(void)
 {
-	Imagem img = criarImagem(9, 9);
+	Imagem img = criarImagem(9, 9, '-');
 	int florTmp[9][9] = {
 		{11, 11, 11, 11, 11, 11, 11, 11, 11},
 		{11, 11, 11, 6, 14, 6, 11, 11, 11},
