@@ -12,7 +12,8 @@ Imagem lerColorir438(FILE *arquivo)
     
     Imagem img;
     if (fscanf(arquivo, "%d %d %c", &lar, &alt, &bg) < 3 || alt < 1 || lar < 1) {
-        c(12); printf("O Colorir438 possui valores invalidos.");
+        c(12); printf("O Colorir438 possui valores inv\xA0lidos.");
+        _getch();
         img = criarImagem(0, 0, '-');
     } else
         img = criarImagem(alt, lar, bg);
