@@ -1,15 +1,21 @@
 #include "../include/imagem.h"
 #include "../include/colorir438.h"
 
+// Lê a entrada de usuário removendo a quebra de linha no final e impedindo entradas vazias
+void lerEntrada(char * destino, int tamanhoDestino);
+
+// Tenta abrir um caminho inserido e ler e editar a Imagem no arquivo
+void abrirImagem(void);
+
 // Entra no loop do editor
 void editar(Imagem img);
 
 // Preenche os pixels de uma Imagem e abre ela no editor
-void carregarExemplo();
+void carregarExemplo(void);
 
 int main(int argc, char **argv)
 {
-	c(15);
+	c(7);
 
 	// Visualiza a imagem passada no argumento
 	if (argc > 1) // Há argumentos
@@ -65,6 +71,7 @@ int main(int argc, char **argv)
 		case 1:
 			break;
 		case 2:
+			abrirImagem();
 			break;
 		case 3:
 			carregarExemplo();
@@ -72,8 +79,36 @@ int main(int argc, char **argv)
 		}
 	} while (opcao != 4);
 
-	c(15);
+	c(7);
 	return 0;
+}
+
+void lerEntrada(char * destino, int tamanhoDestino) {
+	c(7);
+	do {
+		fflush(stdin);
+		fgets(destino, tamanhoDestino, stdin);
+		if (strchr(destino, '\n') != NULL)
+			*strchr(destino, '\n') = '\0';
+	} while (destino[0] == '\0');
+}
+
+void abrirImagem(void)
+{
+	c(7); printf("Digite o caminho do arquivo (Ex: "); c(3); printf("exemplo.c438"); c(7); printf(", "); c(3); printf("./Imagens/exemplo2.bmp"); c(7); printf(", "); c(3); printf("C:\\Users\\..."); c(7); printf("): \n");
+	char caminhoArquivo[260];
+	lerEntrada(caminhoArquivo, 260);
+	Imagem img = lerImagem(caminhoArquivo);
+	if (img.alt > 0)
+		editar(img);
+}
+
+void editar(Imagem img)
+{
+	desenharImagem(img, 1);
+	c(12); printf("Ainda n\xC6o implementado.");
+	_getch();
+	liberarImagem(&img);
 }
 
 void carregarExemplo(void)
@@ -96,12 +131,4 @@ void carregarExemplo(void)
 			img.pixels[y][x] = florTmp[y][x];
 
 	editar(img);
-}
-
-void editar(Imagem img)
-{
-	desenharImagem(img, 1);
-	c(12); printf("Ainda n\xC6o implementado.");
-	_getch();
-	liberarImagem(&img);
 }
