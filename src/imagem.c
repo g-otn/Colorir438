@@ -155,15 +155,16 @@ Imagem lerImagem(char *caminhoArquivo)
 	// Checagem de arquivo indisponível
 	if (!arquivo)
     {
-        c(15); printf("Nao foi possivel abrir o arquivo em \"");
-        c(3); printf("%s", caminhoArquivo); c(15); printf("\"");
+        c(12); printf("N\xC6o foi possivel abrir o arquivo em \"");
+        c(3); printf("%s", caminhoArquivo); c(12); printf("\".");
+        _getch();
 		return criarImagem(0, 0, '-');
 	}
 	// Checagem de arquivo vazio
 	fseek(arquivo, 0, SEEK_END);
 	if (ftell(arquivo) == 0)
     {
-		printf("Arquivo em \""); c(3); printf("%s", caminhoArquivo); c(15); printf("\" vazio!");
+		c(12); printf("O arquivo em \""); c(3); printf("%s", caminhoArquivo); c(12); printf("\" est\xA0 vazio!");
 		_getch();
 		return criarImagem(0, 0, '-');
 	}
@@ -176,15 +177,15 @@ Imagem lerImagem(char *caminhoArquivo)
     {
 		return lerColorir438(arquivo); // ler como .Colorir438
 	} 
-    else if (strstr(filtro, "BM") != NULL)
-    {
-		filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
-		printf("Formato identificado: .bmp ("); c(2); printf("%s", filtro); c(15); printf(")");
-		//return lerBmp(arquivo); // ler como .bmp
-	} 
+    // else if (strstr(filtro, "BM") != NULL)
+    // {
+	// 	filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
+	// 	printf("Formato identificado: .bmp ("); c(2); printf("%s", filtro); c(7); printf(")");
+	// 	//return lerBmp(arquivo); // ler como .bmp
+	// } 
     else
     {
-		printf("O arquivo nao esta em um formato suportado.");
+		c(12); printf("O arquivo em \""); c(3); printf("%s", caminhoArquivo); c(12); printf("\" n\xC6o esta em um formato suportado.");
         return criarImagem(0, 0, '-');
 	}
 }

@@ -100,6 +100,8 @@ void carregarExemplo(void)
 
 void editar(Imagem img)
 {
-	
+	desenharImagem(img, 1);
+	c(12); printf("Ainda n\xC6o implementado.");
+	_getch();
 	liberarImagem(&img);
 }

@@ -12,7 +12,7 @@ Imagem lerColorir438(FILE *arquivo)
     
     Imagem img;
     if (fscanf(arquivo, "%d %d %c", &lar, &alt, &bg) < 3 || alt < 1 || lar < 1) {
-        c(4); printf("O Colorir438 esta com valores invalidos.");
+        c(12); printf("O Colorir438 possui valores invalidos.");
         img = criarImagem(0, 0, '-');
     } else
         img = criarImagem(alt, lar, bg);
@@ -26,7 +26,7 @@ Imagem lerColorir438(FILE *arquivo)
 
             if (ch == EOF) { // Encerra leitura se acabou os caracteres
                 fclose(arquivo);
-                c(14); printf("A arquivo (%dx%d) possui %d pixels nao-preenchidos (%d/%d), a partir de (x%d, y%d). Eles aparecerao em preto.", img.lar, img.alt, (img.lar * img.alt) - (y * img.lar + x), y * img.lar + x, img.lar * img.alt, x, y);
+                c(14); printf("O Colorir438 (%dx%d) possui %d pixels n\xC6o preenchidos (%d/%d), a partir de (x%d, y%d). Eles aparecer\xC6o em preto.", img.lar, img.alt, (img.lar * img.alt) - (y * img.lar + x), y * img.lar + x, img.lar * img.alt, x, y);
                 _getch();
                 return img;
             }
@@ -37,7 +37,7 @@ Imagem lerColorir438(FILE *arquivo)
 
             if (ch == EOF) { // Encerra leitura se acabou os caracteres
                 fclose(arquivo);
-                c(14); printf("A arquivo (%dx%d) possui %d pixels nao-preenchidos (%d/%d), a partir de (x%d, y%d). Eles aparecerao em preto.", img.lar, img.alt, (img.lar * img.alt) - (y * img.lar + x), y * img.lar + x, img.lar * img.alt, x, y);
+                c(14); printf("O Colorir438 (%dx%d) possui %d pixels n\xC6o preenchidos (%d/%d), a partir de (x%d, y%d). Eles aparecer\xC6o em preto.", img.lar, img.alt, (img.lar * img.alt) - (y * img.lar + x), y * img.lar + x, img.lar * img.alt, x, y);
                 _getch();
                 return img;
             }
@@ -52,9 +52,10 @@ Imagem lerColorir438(FILE *arquivo)
     
 
     if (fgetc(arquivo) != EOF) {
-        c(14); printf("O arquivo possui mais pixels do que sua resolucao suporta (%dx%d). Eles serao ignorados.", img.lar, img.alt);
+        c(14); printf("O Colorir438 possui mais pixels do que sua resolu\x87\xC6o suporta (%dx%d). Eles n\xC6o ser\xC6o exibidos.", img.lar, img.alt);
+        _getch();
     }
-
+    
     fclose(arquivo);
     return img;
 }
