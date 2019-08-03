@@ -35,6 +35,7 @@ int main(int argc, char **argv)
 		liberarImagem(&img);
 		_getch(); // Evita consoles de pop-up de fecharem sozinhos
 		system("color 07");
+		//b(0); c(7);
 		return 0; // Não abre o menu nem o editor
 	}
 
@@ -105,6 +106,7 @@ void abrirImagem(void)
 
 void editar(Imagem img)
 {
+	system("cls");
 	desenharImagem(img, 1);
 	c(12); printf("Ainda n\xC6o implementado.");
 	_getch();
