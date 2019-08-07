@@ -34,8 +34,11 @@ Imagem criarImagem(int alt, int lar, int bg)
     img.lar = lar;
     img.bg = bg;
     img.pixels = (int **)malloc(alt * sizeof(int *));
-    for (int y = 0; y < alt; y++)
-        img.pixels[y] = (int *)calloc(lar, sizeof(int));
+    for (int y = 0; y < alt; y++) {
+        img.pixels[y] = (int *)malloc(lar * sizeof(int));
+        for (int x = 0; x < lar; x++)
+            img.pixels[y][x] = ' ';
+    }
 
     return img;
 }
@@ -117,7 +120,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
         if (alteracao == AUMENTAR)
             // Preenche a linha adicionada
             for (int x = 0; x < novaImg.lar; x++)
-                novaImg.pixels[novaImg.alt - 1][x] = 15;
+                novaImg.pixels[novaImg.alt - 1][x] = ' ';
     }
     else // Horizontal
     {
@@ -130,7 +133,7 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
         if (alteracao == AUMENTAR)
             // Preenche a coluna adicionada
             for (int y = 0; y < novaImg.alt; y++)
-                novaImg.pixels[y][novaImg.lar - 1] = 15;
+                novaImg.pixels[y][novaImg.lar - 1] = ' ';
     }
 
     liberarImagem(&img);
