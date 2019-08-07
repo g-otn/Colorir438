@@ -4,6 +4,9 @@
 // Lê a entrada de usuário removendo a quebra de linha no final e impedindo entradas vazias
 void lerEntrada(char * destino, int tamanhoDestino);
 
+// Cria uma nova imagem preenchida com pixels transparentes e a abre no editor
+void criarNovaImagem(void);
+
 // Tenta abrir um caminho inserido e ler e editar a Imagem no arquivo
 void abrirImagem(void);
 
@@ -70,6 +73,7 @@ int main(int argc, char **argv)
 		switch (opcao)
 		{
 		case 1:
+			criarNovaImagem();
 			break;
 		case 2:
 			abrirImagem();
@@ -94,6 +98,25 @@ void lerEntrada(char * destino, int tamanhoDestino) {
 	} while (destino[0] == '\0');
 }
 
+void criarNovaImagem(void) {
+	int alt = 0, lar = 0;
+	char entrada[10];
+
+	// Lê alt e lar
+	while (1) {
+		do {
+			c(7); printf("Digite uma largura e uma altura (Ex: 20x15: \""); c(3); printf("20 15"); c(7); printf("\"): ");
+			lerEntrada(entrada, 10);
+		} while (sscanf(entrada, "%d %d\n", &lar, &alt) < 2);
+		if (alt < 1 && alt < 1) {
+			c(12); printf("Digite uma largura e uma altura maiores que 0.\n");
+		} else
+			break;
+	}
+
+	editar(criarImagem(alt, lar, '-'));
+}
+
 void abrirImagem(void)
 {
 	c(7); printf("Digite o caminho do arquivo (Ex: "); c(3); printf("exemplo.c438"); c(7); printf(", "); c(3); printf("./Imagens/exemplo2.bmp"); c(7); printf(", "); c(3); printf("C:\\Users\\..."); c(7); printf("): \n");
@@ -102,15 +125,6 @@ void abrirImagem(void)
 	Imagem img = lerImagem(caminhoArquivo);
 	if (img.alt > 0)
 		editar(img);
-}
-
-void editar(Imagem img)
-{
-	system("cls");
-	desenharImagem(img, 1);
-	c(12); printf("Ainda n\xC6o implementado.");
-	_getch();
-	liberarImagem(&img);
 }
 
 void carregarExemplo(void)
@@ -133,4 +147,13 @@ void carregarExemplo(void)
 			img.pixels[y][x] = florTmp[y][x];
 
 	editar(img);
+}
+
+void editar(Imagem img)
+{
+	system("cls");
+	desenharImagem(img, 1);
+	c(12); printf("Ainda n\xC6o implementado.");
+	_getch();
+	liberarImagem(&img);
 }
