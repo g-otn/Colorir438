@@ -114,7 +114,7 @@ void criarNovaImagem(void) {
 			break;
 	}
 
-	editar(criarImagem(alt, lar, '-'));
+	editar(criarImagem(alt, lar, '8'));
 }
 
 void abrirImagem(void)
