@@ -15,6 +15,9 @@ void editar(Imagem img);
 // Preenche os pixels de uma Imagem e abre ela no editor
 void carregarExemplo(void);
 
+// Altera o fundo e desenha a imagem sem réguas
+void visualizarImagem(Imagem img);
+
 int main(int argc, char **argv)
 {
 	c(7);
@@ -24,20 +27,10 @@ int main(int argc, char **argv)
 	{
 		Imagem img = lerImagem(argv[1]);
 		
-		if (img.alt > 0) { // Imagem válida
-			if (img.bg != '-') {
-				// Pinta o console inteiro com a cor de fundo (img.bg)
-				char comando[9];
-				sprintf(comando, "color %c0", img.bg);
-				system(comando);
-			}
-			desenharImagem(img, 0);
-		}
+		if (img.alt > 0) // Imagem válida
+			visualizarImagem(img);
 		
 		liberarImagem(&img);
-		_getch(); // Evita consoles de pop-up de fecharem sozinhos
-		system("color 07");
-		//b(0); c(7);
 		return 0; // Não abre o menu nem o editor
 	}
 
@@ -138,11 +131,58 @@ void carregarExemplo(void)
 	editar(img);
 }
 
+void visualizarImagem(Imagem img) {
+	if (img.bg != '-') {
+		// Pinta o console inteiro com a cor de fundo (img.bg)
+		char comando[9];
+		sprintf(comando, "color %c0", img.bg);
+		system(comando);
+	}
+	desenharImagem(img, 0);
+	_getch(); // Evita consoles de pop-up de fecharem sozinhos
+	system("color 07"); // Volta às cores padrão
+}
+
 void editar(Imagem img)
 {
+	char comando;
+	
 	system("cls");
 	desenharImagem(img, 1);
-	c(12); printf("Ainda n\xC6o implementado.");
-	_getch();
-	liberarImagem(&img);
+
+	do {
+		fflush(stdin);
+		c(7); printf("\nDigite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
+		comando = _getch();
+		printf("\n");
+		fflush(stdin);
+
+		switch (comando) {
+			case 'a':
+				exibirComandos();
+				break;
+			case 'l':
+				pintarLinha(&img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case 'p':
+				pintarPixel(&img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case 'v':
+				system("cls");
+				visualizarImagem(img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case 's':
+				liberarImagem(&img);
+				return;
+			default:
+				c(12); printf("Comando incorreto, digite '"); c(11); printf("a"); c(12); printf("' para uma lista de comandos. ");
+				break;
+		}
+	} while (1);
 }
