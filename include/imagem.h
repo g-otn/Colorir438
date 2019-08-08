@@ -44,6 +44,8 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
 // Libera a memória alocada para os pixels
 void liberarImagem(Imagem *img);
 
+#include "colorir438.h"
+
 // Identifica o tipo de arquivo (.c438 ou .bmp) e retorna a Imagem lida do arquivo
 Imagem lerImagem(char *caminhoArquivo);
 

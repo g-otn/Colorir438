@@ -1,4 +1,5 @@
 #include "../include/colorir438.h"
+#include "../include/editor.h"
 #include "../include/entrada.h"
 #include "../include/imagem.h"
 

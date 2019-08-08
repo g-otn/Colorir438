@@ -1,8 +1,4 @@
 #include "../include/editor.h"
-#include "../include/entrada.h"
-#include "../include/imagem.h"
-#include <stdio.h>
-#include <conio.h>
 
 void exibirComandos() {
 	c(5); printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");

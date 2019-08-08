@@ -1,7 +1,8 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "../include/imagem.h"
+#include "entrada.h"
+#include "imagem.h"
 #include <stdio.h>
 #include <conio.h>
 

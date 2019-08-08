@@ -1,9 +1,4 @@
 #include "../include/imagem.h"
-#include "../include/colorir438.h"
-#include <conio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int ultimoC = -1;
 int ultimoB = -1;
