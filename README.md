@@ -3,7 +3,6 @@ Colorir438 is a super-tiny editor for its own simple image format made to draw a
 by mimicking pixels using two ASCII 219 characters together (██).
 
 ## Table of contents
-- [Main Menu](#main-menu)
 - [Editor](#editor)
 - [The Colorir438 (``.c438``) file format](#the-Colorir438-c438-file-format)
   - [Format](#format)
@@ -13,11 +12,6 @@ by mimicking pixels using two ASCII 219 characters together (██).
 - [Built with](#built-with)
 - [Acknoledgments](#acknowledgements)
 
-## Main menu
-The main menu has 3 options besides exiting the application:
-- **[1] Create a new file**: Creates a new image with given resolution and opens it in the editor.
-- **[2] Open image**: Opens a ``.c438`` in a given file path.
-- **[3] Load example image**: Opens an image of a flower in the editor.
 ## Editor
 **(Not implemented yet)**
 While in the editor, you can edit the currently opened image by using the editor commands. 
@@ -128,7 +122,7 @@ See [Releases](https://github.com/g-otn/Colorir438/releases/), the ``.zip`` cont
 
 ## Built with
 This project uses the ``_textcolor`` and the ``_textbackground`` functions from the [Pelles C](https://www.pellesc.de/index.php?page=overview) ``conio.h``.
-This allows to change the text color or background of a single character, instead of the whole Command Prompt (like the ``color`` cmd command).
+It allows to change the text color or background of a single character, instead of the whole Command Prompt (like the ``color`` cmd command).
 
 ## Acknowledgements
 This project was inspired by the Coloring (IED-001) slideshow by Prof. Dr. Silvio do Lago Pereira of FATEC-SP's TI dept.
