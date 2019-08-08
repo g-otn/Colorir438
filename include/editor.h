@@ -7,7 +7,7 @@
 #include <conio.h>
 
 // Exibe uma lista de comandos e suas descrições
-void exibirComandos();
+void exibirComandos(void);
 
 // Troca o valor de uma posição na matriz de pixels da img
 void pintarPixel(Imagem * img);
