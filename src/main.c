@@ -1,8 +1,6 @@
-#include "../include/imagem.h"
 #include "../include/colorir438.h"
-
-// Lê a entrada de usuário removendo a quebra de linha no final e impedindo entradas vazias
-void lerEntrada(char * destino, int tamanhoDestino);
+#include "../include/entrada.h"
+#include "../include/imagem.h"
 
 // Cria uma nova imagem preenchida com pixels transparentes e a abre no editor
 void criarNovaImagem(void);
@@ -86,16 +84,6 @@ int main(int argc, char **argv)
 
 	c(7);
 	return 0;
-}
-
-void lerEntrada(char * destino, int tamanhoDestino) {
-	c(7);
-	do {
-		fflush(stdin);
-		fgets(destino, tamanhoDestino, stdin);
-		if (strchr(destino, '\n') != NULL)
-			*strchr(destino, '\n') = '\0';
-	} while (destino[0] == '\0');
 }
 
 void criarNovaImagem(void) {
