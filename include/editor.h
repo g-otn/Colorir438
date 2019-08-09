@@ -15,4 +15,19 @@ void pintarPixel(Imagem * img);
 // Troca valores de pixels da img formando uma linha
 void pintarLinha(Imagem * img);
 
+typedef enum direcao_t
+{
+    HORIZONTAL,
+    VERTICAL
+} Direcao;
+
+typedef enum alteracao_t
+{
+    AUMENTAR = 1,
+    DIMINUIR = -1
+} Alteracao;
+
+// Copia os valores de img.pixels para uma nova Imagem com tamanho diferente em uma dimensão
+Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
+
 #endif
