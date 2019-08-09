@@ -1,7 +1,6 @@
 #include "../include/entrada.h"
 
 void lerEntrada(char * destino, int tamanhoDestino) {
-	c(7);
 	do {
 		fflush(stdin);
 		fgets(destino, tamanhoDestino, stdin);
