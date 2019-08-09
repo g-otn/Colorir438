@@ -145,17 +145,16 @@ void visualizarImagem(Imagem img) {
 
 void editar(Imagem img)
 {
-	char comando;
+	int comando;
 	
 	system("cls");
 	desenharImagem(img, 1);
 
-	do {
+	do {	
 		fflush(stdin);
 		c(7); printf("\nDigite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
 		comando = _getch();
 		printf("\n");
-		fflush(stdin);
 
 		switch (comando) {
 			case 'a':
@@ -176,6 +175,24 @@ void editar(Imagem img)
 				visualizarImagem(img);
 				system("cls");
 				desenharImagem(img, 1);	
+				break;
+			case 224: // Inicio da sequência retornada por _getch() ao utilizar teclas de seta
+				switch (_getch()) { // Diferencia as teclas de seta
+					case 72: // Cima
+						img = alterarResolucao(img, DIMINUIR, VERTICAL);
+						break;
+					case 80: // Baixo
+						img = alterarResolucao(img, AUMENTAR, VERTICAL);
+						break;
+					case 77: // Direita
+						img = alterarResolucao(img, AUMENTAR, HORIZONTAL);
+						break;
+					case 75: // Esquerda
+						img = alterarResolucao(img, DIMINUIR, HORIZONTAL);
+						break;
+				}
+				system("cls");
+				desenharImagem(img, 1);
 				break;
 			case 's':
 				liberarImagem(&img);
