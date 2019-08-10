@@ -22,6 +22,23 @@ char lerCor(void)
     return cor;
 }
 
+void lerCoordenada(int * x, int * y, Imagem * img) {
+    char coordenadas[10];
+
+    do
+    {
+        do 
+        {
+            lerEntrada(coordenadas, 10);
+        } while (sscanf(coordenadas, "%d %d\n", x, y) < 2);
+        if (*y < 0 || *y > img->lar || *y < 0 || *y > img->lar)
+        {
+			c(12); printf("Digite um valor X de "); c(3); printf("0 a %d", img->lar - 1); c(12); printf(" e um valor Y de "); c(3); printf("0 a %d", img->alt - 1); c(12); printf(".\n");
+        } else
+            break;
+    } while (1);
+}
+
 void exibirComandos(void)
 {
 	c(5);  printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");
@@ -44,20 +61,8 @@ void pintarPixel(Imagem * img)
     int x, y;
     
     // Lê as coordenadas do pixel
-    char coordenadas[10];
-    while (1)
-    {
-        do 
-        {
-            c(7); printf("Digite a coordenada do pixel, separada por espa\x87o (Ex: x5 y9: \""); c(3); printf("5 9"); c(7); printf("\"): ");
-            lerEntrada(coordenadas, 10);
-        } while (sscanf(coordenadas, "%d %d\n", &x, &y) < 2);
-        if (x < 0 || x > img->lar || y < 0 || y > img->lar)
-        {
-			c(12); printf("Digite um valor X de "); c(3); printf("0 a %d", img->lar - 1); c(12); printf(" e um valor Y de "); c(3); printf("0 a %d", img->alt - 1); c(12); printf(".\n");
-        } else
-            break;
-    }
+    c(7); printf("Digite a coordenada do comeco da reta, separada por espa\x87o (Ex: x5 y9: \""); c(3); printf("5 9"); c(7); printf("\"): ");
+	lerCoordenada(&x, &y, img);
 
     img->pixels[y][x] = cor == '-' ? ' ' : cor;
 }

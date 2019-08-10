@@ -5,10 +5,14 @@
 #include "imagem.h"
 #include <stdio.h>
 #include <ctype.h>
+#include <math.h>
 #include <conio.h>
 
 // Lê uma cor ([0-9]|[a-f]|[A-F]|-)
 char lerCor(void);
+
+// Lê uma coordenada X Y na imagem
+void lerCoordenada(int * x, int * y, Imagem * img);
 
 // Exibe uma lista de comandos e suas descrições
 void exibirComandos(void);
