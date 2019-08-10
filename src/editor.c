@@ -1,6 +1,7 @@
 #include "../include/editor.h"
 
-char lerCor() {
+char lerCor(void)
+{
     // Exibe as cores disponíveis
     printf("Escolha uma cor: ");
     for (int i = 0; i < 16; i++) {
@@ -13,14 +14,16 @@ char lerCor() {
 
     // Lê a cor escolhida
     int cor;
-    do {
+    do 
+    {
         cor = toupper(_getch());
     } while (!isdigit(cor) && (cor < 65 || cor > 70) && cor != '-'); // Enquanto não é [0-9]|[A-F]|-
 
     return cor;
 }
 
-void exibirComandos() {
+void exibirComandos(void)
+{
 	c(5);  printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");
 	c(5);  printf("\n  Ferramentas");
     c(11); printf("\n  [p]"); c(10); printf(" Ponto"); c(7); printf(": Pinta um pixel");
@@ -35,11 +38,32 @@ void exibirComandos() {
 
 }
 
-void pintarPixel(Imagem * img) {
+void pintarPixel(Imagem * img)
+{
+    char cor = lerCor();
+    int x, y;
+    
+    // Lê as coordenadas do pixel
+    char coordenadas[10];
+    while (1)
+    {
+        do 
+        {
+            c(7); printf("Digite a coordenada do pixel, separada por espa\x87o (Ex: x5 y9: \""); c(3); printf("5 9"); c(7); printf("\"): ");
+            lerEntrada(coordenadas, 10);
+        } while (sscanf(coordenadas, "%d %d\n", &x, &y) < 2);
+        if (x < 0 || x > img->lar || y < 0 || y > img->lar)
+        {
+			c(12); printf("Digite um valor X de "); c(3); printf("0 a %d", img->lar - 1); c(12); printf(" e um valor Y de "); c(3); printf("0 a %d", img->alt - 1); c(12); printf(".\n");
+        } else
+            break;
+    }
 
+    img->pixels[y][x] = cor == '-' ? ' ' : cor;
 }
 
-void pintarLinha(Imagem * img) {
+void pintarLinha(Imagem * img)
+{
     
 }
 
