@@ -87,12 +87,15 @@ void criarNovaImagem(void) {
 	char entrada[10];
 
 	// Lê alt e lar
-	while (1) {
-		do {
+	while (1)
+	{
+		do 
+		{
 			c(7); printf("Digite uma largura e uma altura (Ex: 20x15: \""); c(3); printf("20 15"); c(7); printf("\"): ");
 			lerEntrada(entrada, 10);
 		} while (sscanf(entrada, "%d %d\n", &lar, &alt) < 2);
-		if (alt < 1 && alt < 1) {
+		if (alt < 1 && alt < 1)
+		{
 			c(12); printf("Digite uma largura e uma altura maiores que 0.\n");
 		} else
 			break;
@@ -134,7 +137,8 @@ void carregarExemplo(void)
 }
 
 void visualizarImagem(Imagem img) {
-	if (img.bg != '-') {
+	if (img.bg != '-') 
+	{
 		// Pinta o console inteiro com a cor de fundo (img.bg)
 		char comando[9];
 		sprintf(comando, "color %c0", img.bg);
