@@ -1,9 +1,29 @@
 #include "../include/editor.h"
 
+char lerCor() {
+    printf("Escolha uma cor: ");
+    for (int i = 0; i < 16; i++) {
+        if (i == 7)
+            c(0);
+        b(i); printf(" %c ", i < 10 ? i + 48 : i + 55); b(0); printf(" ");
+    }
+    c(8); printf("["); c(11); printf("-"); c(8); printf("]");
+    printf("\n");
+    int cor;
+    do {
+        cor = toupper(_getch());
+    } while (!isdigit(cor) && (cor < 65 || cor > 70) && cor != '-'); // Não- [0-9]|[A-F]|-
+    printf("cor: %d %c", cor, cor);
+    _getch();
+    return cor;
+}
+
 void exibirComandos() {
 	c(5); printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");
-	c(11); printf("\n  [p]"); c(10); printf(" Ponto"); c(7); printf(": Pinta um pixel nas coordenadas especificadas");
+	c(11); printf("\n  [p]"); c(10); printf(" Ponto"); c(7); printf(": Pinta um pixel");
 	c(11); printf("\n  [l]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
+    c(11); printf("\n  [f]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem\n");
+
     c(11); printf("\n\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
 	c(11); printf("\n\n  [s]"); c(10); printf(" Sair"); c(7); printf(": Sai do editor e retorna ao menu\n");
 

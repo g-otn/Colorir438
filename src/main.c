@@ -2,6 +2,8 @@
 #include "../include/editor.h"
 #include "../include/entrada.h"
 #include "../include/imagem.h"
+#include <stdio.h>
+#include <conio.h>
 
 // Cria uma nova imagem preenchida com pixels transparentes e a abre no editor
 void criarNovaImagem(void);
@@ -159,6 +161,11 @@ void editar(Imagem img)
 		switch (comando) {
 			case 'a':
 				exibirComandos();
+				break;
+			case 'f':
+				img.bg = lerCor();
+				system("cls");
+				desenharImagem(img, 1);	
 				break;
 			case 'l':
 				pintarLinha(&img);

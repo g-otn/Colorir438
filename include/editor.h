@@ -4,10 +4,17 @@
 #include "entrada.h"
 #include "imagem.h"
 #include <stdio.h>
+#include <ctype.h>
 #include <conio.h>
+
+// Lê uma cor ([0-9]|[a-f]|[A-F]|-)
+char lerCor(void);
 
 // Exibe uma lista de comandos e suas descrições
 void exibirComandos(void);
+
+// Altera a cor de fundo da imagem (img.bg)
+void alterarCorDeFundo(Imagem * img);
 
 // Troca o valor de uma posição na matriz de pixels da img
 void pintarPixel(Imagem * img);
