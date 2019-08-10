@@ -1,6 +1,7 @@
 #include "../include/editor.h"
 
 char lerCor() {
+    // Exibe as cores disponíveis
     printf("Escolha uma cor: ");
     for (int i = 0; i < 16; i++) {
         if (i == 7)
@@ -9,23 +10,28 @@ char lerCor() {
     }
     c(8); printf("["); c(11); printf("-"); c(8); printf("]");
     printf("\n");
+
+    // Lê a cor escolhida
     int cor;
     do {
         cor = toupper(_getch());
-    } while (!isdigit(cor) && (cor < 65 || cor > 70) && cor != '-'); // Não- [0-9]|[A-F]|-
-    printf("cor: %d %c", cor, cor);
-    _getch();
+    } while (!isdigit(cor) && (cor < 65 || cor > 70) && cor != '-'); // Enquanto não é [0-9]|[A-F]|-
+
     return cor;
 }
 
 void exibirComandos() {
-	c(5); printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");
-	c(11); printf("\n  [p]"); c(10); printf(" Ponto"); c(7); printf(": Pinta um pixel");
+	c(5);  printf("\t\t    --== "); c(11); printf("Lista de Comandos"); c(5); printf(" ==--\t\t");
+	c(5);  printf("\n  Ferramentas");
+    c(11); printf("\n  [p]"); c(10); printf(" Ponto"); c(7); printf(": Pinta um pixel");
 	c(11); printf("\n  [l]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
-    c(11); printf("\n  [f]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem\n");
+    c(11); printf("\n  [f]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem");
+    c(11); printf("\n  [teclas de seta]"); c(10); printf(" Alterar tamanho"); c(7); printf(": Altera a altura e a largura da imagem\n");
 
-    c(11); printf("\n\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
-	c(11); printf("\n\n  [s]"); c(10); printf(" Sair"); c(7); printf(": Sai do editor e retorna ao menu\n");
+    c(5);  printf("\n  Arquivo");
+    c(11); printf("\n  [v]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
+	
+    c(11); printf("\n\n  [s]"); c(10); printf(" Sair"); c(7); printf(": Sai do editor e retorna ao menu\n");
 
 }
 
