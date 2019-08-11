@@ -171,27 +171,33 @@ void editar(Imagem img)
 			case 'a':
 				exibirComandos();
 				break;
+			case '1':
+			case 'p':
+				pintarPixel(&img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case '2':
+			case 'l':
+				pintarLinha(&img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case '3':
 			case 'f':
 				img.bg = lerCor();
 				img.bg = img.bg == ' ' ? '-' : img.bg < 10 ? img.bg + 48 : img.bg + 55;
 				system("cls");
 				desenharImagem(img, 1);	
 				break;
-			case 'l':
-				pintarLinha(&img);
-				system("cls");
-				desenharImagem(img, 1);	
-				break;
+			case '4':
 			case 'm':
 				img = moverImagem(img);
 				system("cls");
 				desenharImagem(img, 1);	
 				break;
-			case 'p':
-				pintarPixel(&img);
-				system("cls");
-				desenharImagem(img, 1);	
-				break;
+				// 5, 6: desfazer refazer
+			case '7':
 			case 'v':
 				system("cls");
 				visualizarImagem(img);
@@ -216,6 +222,8 @@ void editar(Imagem img)
 				system("cls");
 				desenharImagem(img, 1);
 				break;
+				// 7, 8: salvar salvar como
+			case '0':
 			case 's':
 				liberarImagem(&img);
 				return;
