@@ -7,7 +7,7 @@ Imagem lerColorir438(FILE *arquivo)
     fseek(arquivo, 11, SEEK_SET); // Pula para depois do "Colorir438 "
     
     Imagem img;
-    if (fscanf(arquivo, "%d %d %c", &lar, &alt, &bg) < 3 || alt < 1 || lar < 1) {
+    if (fscanf(arquivo, "%d %d %[0123456789ABCDEFG-]", &lar, &alt, &bg) < 3 || alt < 1 || lar < 1) {
         c(12); printf("O Colorir438 possui valores inv\xA0lidos.");
         _getch();
         img = criarImagem(0, 0, '-');
