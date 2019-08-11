@@ -49,13 +49,13 @@ void exibirComandos(void)
 	c(11); printf("\n  [2][L]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
 
     c(5);  printf("\n\n  Imagem");
-    c(11); printf("\n  [3][F]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem");
+    c(11); printf("\n  [4][F]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem");
     c(11); printf("\n  [teclas de seta]"); c(10); printf(" Alterar tamanho"); c(7); printf(": Altera a altura e a largura da imagem");
-    c(11); printf("\n  [4][M]"); c(10); printf(" Mover"); c(7); printf(": Move todos os pixels em uma dire\x87\xC6o");
-    c(11); printf("\n  [7][V]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
+    c(11); printf("\n  [5][M]"); c(10); printf(" Mover"); c(7); printf(": Move todos os pixels em uma dire\x87\xC6o");
+    c(11); printf("\n  [8][V]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
 
     c(5);  printf("\n\n  Arquivo");
-    c(11); printf("\n  [backspace][S]"); c(10); printf(" Sair"); c(7); printf(": Sai do editor e retorna ao menu\n");
+    c(11); printf("\n  [Esc][S]"); c(10); printf(" Sair"); c(7); printf(": Sai do editor e retorna ao menu\n");
 
 }
 

@@ -24,7 +24,6 @@ void b(int cor)
 Imagem criarImagem(int alt, int lar, int bg)
 {
     Imagem img;
-
     img.alt = alt;
     img.lar = lar;
     img.bg = bg;
