@@ -58,25 +58,25 @@ int main(int argc, char **argv)
 			opcao = -1;
 			
 			// TODO: adicionar filtro de números (evitar spam com ctrl+v acidental)
-			opcao = _getch() - '0'; // Transforma '1' em 1, '2' em 2, etc
+			opcao = _getch();
 			fflush(stdin);
-		} while (opcao < 1 || opcao > 5);
+		} while ((opcao < '1' || opcao > '5') && opcao != 27);
 
 		printf("\n");
 
 		switch (opcao)
 		{
-		case 1:
+		case '1':
 			criarNovaImagem();
 			break;
-		case 2:
+		case '2':
 			abrirImagem();
 			break;
-		case 3:
+		case '3':
 			carregarExemplo();
 			break;
 		}
-	} while (opcao != 4);
+	} while (opcao != '4' && opcao != 27);
 
 	c(7);
 	return 0;
@@ -117,7 +117,7 @@ void abrirImagem(void)
 
 void carregarExemplo(void)
 {
-	Imagem img = criarImagem(9, 9, '-');
+	Imagem img = criarImagem(9, 9, '3');
 	int florTmp[9][9] = {
 		{11, 11, 11, 11, 11, 11, 11, 11, 11},
 		{11, 11, 11, 6, 14, 6, 11, 11, 11},
@@ -145,7 +145,6 @@ void visualizarImagem(Imagem img)
 		char comando[9];
 		sprintf(comando, "color %c0", img.bg);
 		system(comando);
-		printf("img.bg: %d cmd: %s\n", img.bg, comando);
 	}
 	desenharImagem(img, 0);
 	_getch(); // Evita consoles de pop-up de fecharem sozinhos
@@ -223,7 +222,7 @@ void editar(Imagem img)
 				desenharImagem(img, 1);
 				break;
 				// 7, 8: salvar salvar como
-			case '0':
+			case 27: // Esc
 			case 's':
 				liberarImagem(&img);
 				return;
