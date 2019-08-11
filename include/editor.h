@@ -41,4 +41,7 @@ typedef enum alteracao_t
 // Copia os valores de img.pixels para uma nova Imagem com tamanho diferente em uma dimensão
 Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao);
 
+// Entra em um modo de edição que permite mover todos os pixels para uma direção
+Imagem moverImagem(Imagem img);
+
 #endif

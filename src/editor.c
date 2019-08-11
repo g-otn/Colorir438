@@ -19,7 +19,7 @@ char lerCor(void)
         cor = toupper(_getch());
     } while (!isdigit(cor) && (cor < 65 || cor > 70) && cor != '-'); // Enquanto não é [0-9]|[A-F]|-
 
-    return cor;
+    return cor == '-' ? ' ' : (cor < 65 ? cor - 48 : cor - 55);
 }
 
 void lerCoordenada(int * x, int * y, Imagem * img)
@@ -66,7 +66,7 @@ void pintarPixel(Imagem * img)
     c(7); printf("Digite a coordenada do come\x87o da reta, separada por espa\x87o (Ex: x5 y9: \""); c(3); printf("5 9"); c(7); printf("\"): ");
 	lerCoordenada(&x, &y, img);
 
-    img->pixels[y][x] = cor == '-' ? ' ' : cor;
+    img->pixels[y][x] = cor;
 }
 
 void pintarLinha(Imagem * img)

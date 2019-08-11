@@ -143,9 +143,9 @@ void visualizarImagem(Imagem img)
 	{
 		// Pinta o console inteiro com a cor de fundo (img.bg)
 		char comando[9];
-		sprintf(comando, "color %c0", img.bg < 10 ? img.bg + 48 : img.bg + 55);
+		sprintf(comando, "color %c0", img.bg);
 		system(comando);
-		printf("cmd: %s", comando);
+		printf("img.bg: %d cmd: %s\n", img.bg, comando);
 	}
 	desenharImagem(img, 0);
 	_getch(); // Evita consoles de pop-up de fecharem sozinhos
@@ -161,6 +161,8 @@ void editar(Imagem img)
 
 	do {	
 		fflush(stdin);
+        c(14); printf("\nLargura %d, Altura %d", img.lar, img.alt);
+
 		c(7); printf("\nDigite um comando ("); c(11); printf("[A]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[S]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
 		comando = _getch();
 		printf("\n");
@@ -171,6 +173,7 @@ void editar(Imagem img)
 				break;
 			case 'f':
 				img.bg = lerCor();
+				img.bg = img.bg == ' ' ? '-' : img.bg < 10 ? img.bg + 48 : img.bg + 55;
 				system("cls");
 				desenharImagem(img, 1);	
 				break;
