@@ -49,6 +49,7 @@ void exibirComandos(void)
 	c(11); printf("\n  [L]"); c(10); printf(" Linha"); c(7); printf(": Desenha uma linha na imagem");
     c(11); printf("\n  [F]"); c(10); printf(" Fundo"); c(7); printf(": Altera a cor de fundo da imagem");
     c(11); printf("\n  [teclas de seta]"); c(10); printf(" Alterar tamanho"); c(7); printf(": Altera a altura e a largura da imagem\n");
+    c(11); printf("\n  [M]"); c(10); printf(" Mover"); c(7); printf(": Move todos os pixels em uma dire\x87\xC6o\n");
 
     c(5);  printf("\n  Arquivo");
     c(11); printf("\n  [V]"); c(10); printf(" Visualizar"); c(7); printf(": Desenha a imagem sem as r\x82guas esquerda e superior");
@@ -204,4 +205,63 @@ Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
 
     liberarImagem(&img);
     return novaImg;
+}
+
+Imagem moverImagem(Imagem img)
+{
+    Imagem imgMovida = criarImagem(img.alt, img.lar, img.bg);
+    for (int y = 0; y < img.alt; y++)
+        for (int x = 0; x < img.lar; x++)
+            imgMovida.pixels[y][x] = img.pixels[y][x];
+    int comando, offsetX = 0, offsetY = 0;
+
+    do
+    {
+        // Desenha a imagem
+        system("cls");
+        desenharImagem(imgMovida, 1);
+        c(14); printf("\nOffset: X %d, Y %d", offsetX, offsetY);
+        c(7); printf("\nUtilize as "); c(11); printf("[teclas de seta]"); c(7); printf(" para mover a imagem, digite "); c(11); printf("[S]"); c(7); printf(" aplicar as mudan\x87\x61s e sair do modo de edi\x87\xC6o.");
+
+        // Lê a direção da movimentação
+        do {
+            comando = _getch();
+
+            // Sair do modo de mover
+            if (comando == 's' || comando == 27)
+                return imgMovida;
+        } while (comando != 224);
+
+        // Altera o offset
+        switch (_getch()) { // Diferencia as teclas de seta
+            case 72: // Cima
+                if (offsetY > -img.alt)
+                    offsetY--;
+                break;
+            case 80: // Baixo
+                if (offsetY < img.alt)
+                    offsetY++;
+                break;
+            case 77: // Direita
+                if (offsetX < img.lar)
+                    offsetX++;
+                break;
+            case 75: // Esquerda
+                if (offsetX > -img.lar)
+                    offsetX--;
+                break;
+        }
+        
+        // Move os pixels da imagem
+        for (int y = 0; y < img.alt; y++)
+        {
+            for (int x = 0; x < img.lar; x++)
+            {
+                if (y >= offsetY && y < img.alt + offsetY && x >= offsetX && x < img.lar + offsetX)
+                    imgMovida.pixels[y][x] = img.pixels[y - offsetY][x - offsetX];
+                else
+                    imgMovida.pixels[y][x] = ' ';
+            }
+        }
+    } while (comando != 's' && comando != 27);
 }

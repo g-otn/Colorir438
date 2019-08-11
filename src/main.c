@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 		printf("\n\t"); c(5); printf("\xBA  "); c(5); 	printf("\t\t    --== "); c(11); printf("Colorir"); c(13); printf("438"); c(5); printf(" ==--\t\t"); c(5); printf("\xBA  ");
 		printf("\n\t"); c(5); printf("\xBA  "); c(8); 	printf(" Criado por g-otn (https://github.com/g-otn) - 2019\t"); 									c(5); printf("\xBA  ");
 		printf("\n\t"); c(5); printf("\xBA  "); c(11); 	printf("[1]"); c(10); printf(" Nova imagem\t\t\t\t\t"); 											c(5); printf("\xBA  ");
-		printf("\n\t"); c(5); printf("\xBA  "); c(11); 	printf("[2]"); c(10); printf(" Abrir imagem (.bmp, .c438)\t\t\t"); 									c(5); printf("\xBA  ");
+		printf("\n\t"); c(5); printf("\xBA  "); c(11); 	printf("[2]"); c(10); printf(" Abrir imagem (.c438)\t\t\t\t"); 										c(5); printf("\xBA  ");
 		printf("\n\t"); c(5); printf("\xBA  "); c(11); 	printf("[3]"); c(10); printf(" Carregar imagem de exemplo\t\t\t"); 									c(5); printf("\xBA  ");
 		printf("\n\t"); c(5); printf("\xBA  "); c(11); 	printf("[4]"); c(10); printf(" Sair\t\t\t\t\t\t"); 													c(5); printf("\xBA  ");
 		printf("\n\t"); c(5); printf("\xC8\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xCD\xBC\n");
@@ -82,7 +82,8 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void criarNovaImagem(void) {
+void criarNovaImagem(void)
+{
 	int alt = 0, lar = 0;
 	char entrada[10];
 
@@ -136,13 +137,15 @@ void carregarExemplo(void)
 	editar(img);
 }
 
-void visualizarImagem(Imagem img) {
+void visualizarImagem(Imagem img)
+{
 	if (img.bg != '-') 
 	{
 		// Pinta o console inteiro com a cor de fundo (img.bg)
 		char comando[9];
-		sprintf(comando, "color %c0", img.bg);
+		sprintf(comando, "color %c0", img.bg < 10 ? img.bg + 48 : img.bg + 55);
 		system(comando);
+		printf("cmd: %s", comando);
 	}
 	desenharImagem(img, 0);
 	_getch(); // Evita consoles de pop-up de fecharem sozinhos
@@ -158,11 +161,11 @@ void editar(Imagem img)
 
 	do {	
 		fflush(stdin);
-		c(7); printf("\nDigite um comando ("); c(11); printf("[a]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[s]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
+		c(7); printf("\nDigite um comando ("); c(11); printf("[A]"); c(10); printf(" Ajuda"); c(7); printf(", "); c(11); printf("[S]"); c(10); printf(" Sair"); c(7); printf("): "); c(15);
 		comando = _getch();
 		printf("\n");
 
-		switch (comando) {
+		switch (tolower(comando)) {
 			case 'a':
 				exibirComandos();
 				break;
@@ -173,6 +176,11 @@ void editar(Imagem img)
 				break;
 			case 'l':
 				pintarLinha(&img);
+				system("cls");
+				desenharImagem(img, 1);	
+				break;
+			case 'm':
+				img = moverImagem(img);
 				system("cls");
 				desenharImagem(img, 1);	
 				break;
@@ -209,7 +217,7 @@ void editar(Imagem img)
 				liberarImagem(&img);
 				return;
 			default:
-				c(12); printf("Comando incorreto, digite '"); c(11); printf("a"); c(12); printf("' para uma lista de comandos. ");
+				c(12); printf("Comando incorreto, digite '"); c(11); printf("A"); c(12); printf("' para uma lista de comandos. ");
 				break;
 		}
 	} while (1);
