@@ -1,29 +1,55 @@
 # Colorir438 ![project icon](res/48x48.ico)
-Colorir438 is a super-tiny editor for its own simple image format made to draw and visualize small images/pixel arts on the Command Prompt
+Colorir438 is a tiny editor for its own simple image format made to draw and visualize small images/pixel arts on the Command Prompt
 by mimicking pixels using two ASCII 219 characters together (██).
 
 ## Table of contents
 - [Editor](#editor)
-- [The Colorir438 (``.c438``) file format](#the-Colorir438-c438-file-format)
+  - [Paint commands](#paint-commands)
+  - [Image commands](#image-commands)
+  - [File commands](#file-commands)
+- [The Colorir438 (``.c438``) file format](#the-colorir438-c438-file-format)
   - [Format](#format)
   - [Definitions](#definitions)
   - [Example](#example)
+- [Opening and running the project](#opening-and-running-the-project)
 - [**Download**](#download)
 - [Built with](#built-with)
 - [Acknoledgments](#acknowledgements)
 
 ## Editor
-**(Not implemented yet)**
-While in the editor, you can edit the currently opened image by using the editor commands. 
+You can edit images by using the editor commands. Use a command by pressing its case insensitive key shortcuts:
+- **A** (Help): Show a list of commands and its shortcuts.
+### Paint commands
+- **1** or **P** (Point): Paints one pixel.
+- **2** or **L** (Line): Draws an one pixel wide line from a pixel to another.
 
-Use a command by pressing its key shortcut, for example, 
-pressing ``h`` will show a list of commands (the keys varies according to the executable language).
+![linha](https://user-images.githubusercontent.com/44736064/62830763-60a9e880-bbea-11e9-8b70-7a5cf4a38d7f.gif)
+
+### Image commands
+- **4** or **B** (Background): Changes the background color.
+
+![fundo](https://user-images.githubusercontent.com/44736064/62830761-5e478e80-bbea-11e9-84d1-7c44976a6944.gif)
+
+- **Arrow keys** (Change size): Resizes the image from the right or bottom corner.
+
+![tamanho](https://user-images.githubusercontent.com/44736064/62830765-630c4280-bbea-11e9-8b46-171a16c2bac1.gif)
+
+- **5** or **M** (Move): Move the entire image to one direction.
+
+![mover](https://user-images.githubusercontent.com/44736064/62830764-6273ac00-bbea-11e9-9e7c-7020a93b95d1.gif)
+
+- **8** or **V** (Visualize): Displays the image with its color background and without the editor's rulers.
+
+![visualizar](https://user-images.githubusercontent.com/44736064/62830766-656e9c80-bbea-11e9-9932-2f4285c2d185.gif)
+
+### File commands
+- **Esc** or **S** (Exit): Exits the editor and returns to the main menu.
 
 ## The Colorir438 (``.c438``) file format
 Sometimes editing with the editor can be slow, but with the Colorir438 format it's easy to edit the images manually with any text editor.
 
 ### Format
-When you open a ``.c438`` file with a text editor, you will find something this format:
+When you open a ``.c438`` file with a text editor, you will find something within this format:
 ```
 Colorir438 <Image height> <Image width> <Background color>
 <Matrix of pixels (characters)>
@@ -31,13 +57,9 @@ Colorir438 <Image height> <Image width> <Background color>
 ### Definitions
 - **``Colorir438 ``**: Case sensitive characters sequence that ``Colorir438.exe`` uses to identify the file 
 and start reading it with the Colorir438 format.
-- **Image height**: A positive integer which tells the width in "pixels" of the image. 
-  - It is recommended to be <= 300, and
-for a width > 100, is it recommended to reduce the font size of the cmd to be able to properly see the image.
-- **Image width**: A positive integer which tells the height in "pixels" of the image. 
-  - It is recommended to be <= 500.
-- **Background color**: The character that represents a color that the Command Prompt will change its background to while visualizing the image.
-This is recommended when using black outline pixels in Command Prompts with black background. The available characters are:
+- **Image height**: A positive integer which tells the height in "pixels" of the image. Recommended to be <= 300.
+- **Image width**: A positive integer which tells the width in "pixels" of the image. Recommended to be <= 100.
+- **Background color**: The character that represents a color that the Command Prompt will change its background to while visualizing the image. The available characters are:
   - ``[0-9]|[A-F]``: A numerical or alphabethic (A-F only) that represents an hexadecimal number from 0 to 16 where which number represents a color.
   Available colors: 
   ![0](https://placehold.it/10/000000/?text=+) 0 
@@ -105,7 +127,7 @@ Colorir438 16 16 F
 
 ## Directly visualizing images
 If you made or saved a ``.c438`` file, you don't need to open the editor just to visualize the image. Try using:
-### Right click "Open With"
+### Explorer's "Open With"
   1. Right click on the file and click on "Open With"
   2. Find and select ``Colorir438.exe``
   3. Opening the ``.c438`` file now will launch a pop-up console showing the image
@@ -116,6 +138,11 @@ so running in the cmd the command ``Colorir438 path/to/image`` will launch a pop
 <p align="center">
   <img src="https://user-images.githubusercontent.com/44736064/62417338-5a809e80-b623-11e9-8770-087b8ce7771d.gif">
 </p>
+
+## Opening and running the project
+1. Install [Pelles C](https://www.pellesc.de/index.php?page=download) (compatible with 9.0.0).
+2. Open ``Colorir438.ppj``.
+3. Click on Execute (Ctrl+F5).
 
 ## Download
 See [Releases](https://github.com/g-otn/Colorir438/releases/), the ``.zip`` containing the executable is in the "Assets" of a release.
