@@ -125,6 +125,8 @@ Colorir438 16 16 F
 ```
 ![example_mushroom](https://user-images.githubusercontent.com/44736064/62418620-e1457380-b643-11e9-8f76-51228e9c8687.png)
 
+You can find more examples in the ``images/`` project folder.
+
 ## Directly visualizing images
 If you made or saved a ``.c438`` file, you don't need to open the editor just to visualize the image. Try using:
 ### Explorer's "Open With"

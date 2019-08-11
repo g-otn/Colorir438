@@ -1,9 +1,4 @@
 #include "../include/imagem.h"
-#include "../include/colorir438.h"
-#include <conio.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int ultimoC = -1;
 int ultimoB = -1;
@@ -29,7 +24,6 @@ void b(int cor)
 Imagem criarImagem(int alt, int lar, int bg)
 {
     Imagem img;
-
     img.alt = alt;
     img.lar = lar;
     img.bg = bg;
@@ -50,7 +44,8 @@ void desenharImagem(Imagem img, int desenharRegua)
 
     for (y = desenharRegua; y < img.alt; y++)
     {
-        c(15);
+        _textcolor(15);
+        ultimoC = 15;
         for (x = desenharRegua; x < img.lar; x++)
         {
             if (y < 0 && x < 0)
@@ -76,15 +71,20 @@ void desenharImagem(Imagem img, int desenharRegua)
             }
             else
             {
-                if (x == 0 && y > 0 && !desenharRegua)
+                if (!desenharRegua && x == 0 && y > 0)
                     printf("\n"); // Pula linha caso não entre no if de desenhar a régua onde a linha é pulada, pois o desenharRegua == 0
 
                 // Desenhando imagem (0, 0) até (img.lar, img.alt)
                 if (img.pixels[y][x] == ' ') // Transparente
                     if (desenharRegua) // Editando
                     {
-                        c(img.bg == '-' ? 0 : (img.bg < 58 ? img.bg - 48 : img.bg - 55)); // Transforma '0'-'9' em 0-9 e 'A'-'F' em 10-15
-                        printf("[]"); // Visível na edição
+                        if (img.bg == '-')
+                            printf("  ");
+                        else
+                        {
+                            c(img.bg < 58 ? img.bg - 48 : img.bg - 55); // '0'-'9' -> 0-9, 'A'-'F' -> 10-15
+                            printf("[]"); // Visível na edição
+                        }
                     } 
                     else
                         printf("  "); // Invisível na visualização
@@ -97,47 +97,6 @@ void desenharImagem(Imagem img, int desenharRegua)
         }
     }
     printf("\n");
-}
-
-Imagem alterarResolucao(Imagem img, Alteracao alteracao, Direcao direcao)
-{
-    // Restrição para imagens não ficarem menores que 1x1
-    if (alteracao == DIMINUIR)
-        if ((img.alt == 1 && direcao == VERTICAL) || (img.lar == 1 && direcao == HORIZONTAL))
-            return img;
-
-    Imagem novaImg;
-
-    // Copia os pixels de img para novaImg, que possui alt/lar diferente(s))
-    if (direcao == VERTICAL)
-    {
-        novaImg = criarImagem(img.alt + alteracao, img.lar, img.bg);
-
-        int menorAlt = alteracao == DIMINUIR ? novaImg.alt : img.alt;
-        for (int y = 0; y < menorAlt; y++)
-            for (int x = 0; x < novaImg.lar; x++)
-                novaImg.pixels[y][x] = img.pixels[y][x];
-        if (alteracao == AUMENTAR)
-            // Preenche a linha adicionada
-            for (int x = 0; x < novaImg.lar; x++)
-                novaImg.pixels[novaImg.alt - 1][x] = ' ';
-    }
-    else // Horizontal
-    {
-        novaImg = criarImagem(img.alt, img.lar + alteracao, img.bg);
-
-        int menorLar = alteracao == DIMINUIR ? novaImg.lar : img.lar;
-        for (int y = 0; y < novaImg.alt; y++)
-            for (int x = 0; x < menorLar; x++)
-                novaImg.pixels[y][x] = img.pixels[y][x];
-        if (alteracao == AUMENTAR)
-            // Preenche a coluna adicionada
-            for (int y = 0; y < novaImg.alt; y++)
-                novaImg.pixels[y][novaImg.lar - 1] = ' ';
-    }
-
-    liberarImagem(&img);
-    return novaImg;
 }
 
 void liberarImagem(Imagem *img)
@@ -175,13 +134,10 @@ Imagem lerImagem(char *caminhoArquivo)
 	char filtro[11];
 	fgets(filtro, sizeof filtro, arquivo); // Guarda os 10 primeiros chars do arquivo
 	if (strcmp(filtro, "Colorir438") == 0)
-    {
 		return lerColorir438(arquivo); // ler como .Colorir438
-	} 
     // else if (strstr(filtro, "BM") != NULL)
     // {
 	// 	filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
-	// 	printf("Formato identificado: .bmp ("); c(2); printf("%s", filtro); c(7); printf(")");
 	// 	//return lerBmp(arquivo); // ler como .bmp
 	// } 
     else
