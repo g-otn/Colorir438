@@ -107,6 +107,44 @@ void liberarImagem(Imagem *img)
     img->pixels = NULL;
 }
 
+const int RED[16] = { 0,   0,   0,   0, 128, 128, 128, 192, 128,   0,   0,   0, 255, 255, 255, 255 };
+const int GREEN[16] = { 0,   0, 128, 128,   0,   0, 128, 192, 128,   0, 255, 255,   0,   0, 255, 255 };
+const int BLUE[16] = { 0, 128,   0, 128,   0, 128,   0, 192, 128, 255,   0, 255,   0, 255,   0, 255 };
+
+int RGBparaCorCMD(unsigned char red, unsigned char green, unsigned char blue)
+{
+    int menorCor = -1;
+    unsigned char menorDiferenca = 255;
+    
+    for (int cor = 0; cor < 16; cor++)
+    {
+        int diferenca = abs(RED[cor] - red) + abs(GREEN[cor] - green) + abs(BLUE[cor] - blue);
+        if (diferenca < menorDiferenca)
+        {
+            menorCor = cor;
+            menorDiferenca = diferenca;
+        }
+    }
+
+    return menorCor;
+}
+
+Imagem lerBitmap(Bitmap *bm)
+{
+    Imagem img = criarImagem(bm_height(bm), bm_width(bm), '-');
+    unsigned char red, green, blue;
+
+    // Lê pixels e os atribui na imagem
+    for (int y = 0; y < img.alt; y++)
+        for (int x = 0; x < img.lar; x++)
+        {
+            bm_get_rgb(bm_get(bm, x, y), &red, &green, &blue);
+            img.pixels[y][x] = RGBparaCorCMD(red, green, blue);
+        }
+
+    return img;
+}
+
 Imagem lerImagem(char *caminhoArquivo)
 {
     // Tenta abrir o arquivo
@@ -129,20 +167,20 @@ Imagem lerImagem(char *caminhoArquivo)
 		return criarImagem(0, 0, '-');
 	}
 
-	// Filtrador de tipo de arquivo (.bmp ou .Colorir438)
+	// Lê como .c438
 	rewind(arquivo);
 	char filtro[11];
-	fgets(filtro, sizeof filtro, arquivo); // Guarda os 10 primeiros chars do arquivo
+	fgets(filtro, sizeof filtro, arquivo);
 	if (strcmp(filtro, "Colorir438") == 0)
-		return lerColorir438(arquivo); // ler como .Colorir438
-    // else if (strstr(filtro, "BM") != NULL)
-    // {
-	// 	filtro[2] = '\0'; // Faz com que o filtro como %s seja só os primeiros 2 bytes ("BM")
-	// 	//return lerBmp(arquivo); // ler como .bmp
-	// } 
-    else
-    {
-		c(12); printf("O arquivo em \""); c(3); printf("%s", caminhoArquivo); c(12); printf("\" n\xC6o esta em um formato suportado.");
-        return criarImagem(0, 0, '-');
-	}
+		return lerColorir438(arquivo);      
+    
+    // Lê como .bmp
+    rewind(arquivo);
+    Bitmap *bm = bm_load_fp(arquivo);
+    if (bm)
+		return lerBitmap(bm);
+    
+    // Arquivo não reconehcido
+    c(12); printf("O arquivo em \""); c(3); printf("%s", caminhoArquivo); c(12); printf("\" n\xC6o esta em um formato suportado.");
+    return criarImagem(0, 0, '-');
 }
