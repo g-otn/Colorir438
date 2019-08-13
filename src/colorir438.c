@@ -2,7 +2,8 @@
 
 Imagem lerColorir438(FILE *arquivo)
 {
-    int alt = 0, lar = 0, bg;
+    int alt = 0, lar = 0;
+    char bg;
     
     fseek(arquivo, 11, SEEK_SET); // Pula para depois do "Colorir438 "
     
