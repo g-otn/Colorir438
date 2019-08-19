@@ -63,7 +63,7 @@ and start reading it with the Colorir438 format.
 - **Image height**: A positive integer which tells the height in "pixels" of the image. Recommended to be <= 300.
 - **Image width**: A positive integer which tells the width in "pixels" of the image. Recommended to be <= 100.
 - **Background color**: The character that represents a color that the Command Prompt will change its background to while visualizing the image. The available characters are:
-  - ``[0-9]|[A-F]``: A numerical or alphabethic (A-F only) that represents an hexadecimal number from 0 to 16 where which number represents a color.
+  - ``[0-9]|[A-F]``: An hexadecimal digit.
   Available colors: 
   ![0](https://placehold.it/10/000000/?text=+) 0 
   ![1](https://placehold.it/10/0000ff/?text=+) 1 
@@ -86,7 +86,7 @@ and start reading it with the Colorir438 format.
 
 - **Matrix of pixels**: A sequence of characters where each character represents a pixel. Line breaks are ignored. 
  The available characters are: 
-  - ``[0-9]|[A-F]``: A numerical or alphabethic (A-F only) that represents an hexadecimal number from 0 to 16 where which number represents a color.
+  - ``[0-9]|[A-F]``: An hexadecimal digit.
   Available colors: 
   ![0](https://placehold.it/10/000000/?text=+) 0 
   ![1](https://placehold.it/10/0000ff/?text=+) 1 
