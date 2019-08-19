@@ -107,9 +107,9 @@ void liberarImagem(Imagem *img)
     img->pixels = NULL;
 }
 
-const int RED[16] = { 0,   0,   0,   0, 128, 128, 128, 192, 128,   0,   0,   0, 255, 255, 255, 255 };
+const int RED[16] =   { 0,   0,   0,   0, 128, 128, 128, 192, 128,   0,   0,   0, 255, 255, 255, 255 };
 const int GREEN[16] = { 0,   0, 128, 128,   0,   0, 128, 192, 128,   0, 255, 255,   0,   0, 255, 255 };
-const int BLUE[16] = { 0, 128,   0, 128,   0, 128,   0, 192, 128, 255,   0, 255,   0, 255,   0, 255 };
+const int BLUE[16] =  { 0, 128,   0, 128,   0, 128,   0, 192, 128, 255,   0, 255,   0, 255,   0, 255 };
 
 int RGBparaCorCMD(unsigned char red, unsigned char green, unsigned char blue)
 {
@@ -148,7 +148,7 @@ Imagem lerBitmap(Bitmap *bm)
 Imagem lerImagem(char *caminhoArquivo)
 {
     // Tenta abrir o arquivo
-	FILE *arquivo = fopen(caminhoArquivo, "r");
+	FILE *arquivo = fopen(caminhoArquivo, "rb");
 
 	// Checagem de arquivo indisponível
 	if (!arquivo)
