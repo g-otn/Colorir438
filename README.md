@@ -141,7 +141,10 @@ You can quickly open a pop-up console to visualize a image file:
 #### Explorer's "Open With"
 - Right click on the file, click on "Open With" and select ``Colorir438.exe``
 - Drag the file on the executable
-![example_open_with_drag](https://user-images.githubusercontent.com/44736064/63237145-29a18b80-c217-11e9-89d7-b1cea1f852e8.gif)
+
+<p align="center">
+  <img alt="example_open_with_drag" src="https://user-images.githubusercontent.com/44736064/63237145-29a18b80-c217-11e9-89d7-b1cea1f852e8.gif">
+</p>
 
 
 #### Path argument
