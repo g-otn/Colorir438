@@ -11,10 +11,13 @@ by mimicking pixels using two ASCII 219 characters together (██).
   - [Format](#format)
   - [Definitions](#definitions)
   - [Example](#example)
+- [Additional features](#additional-features)
+  - [Bitmap support](#bitmap-support)
+  - [Directly visualizing images](#directly-visualizing-images)
 - [Opening and running the project](#opening-and-running-the-project)
 - [**Download**](#download)
 - [Built with](#built-with)
-- [Acknoledgments](#acknowledgements)
+- [Acknoledgements](#acknowledgements)
 
 ## Editor
 You can edit images by using the editor commands. Use a command by pressing its case insensitive key shortcuts:
@@ -125,16 +128,24 @@ Colorir438 16 16 F
 ```
 ![example_mushroom](https://user-images.githubusercontent.com/44736064/62418620-e1457380-b643-11e9-8f76-51228e9c8687.png)
 
-You can find more examples in the ``images/`` project folder.
+You can find more examples in the ``samples/`` [project folder](https://github.com/g-otn/Colorir438/tree/master/samples).
 
-## Directly visualizing images
-If you made or saved a ``.c438`` file, you don't need to open the editor just to visualize the image. Try using:
-### Explorer's "Open With"
-  1. Right click on the file and click on "Open With"
-  2. Find and select ``Colorir438.exe``
-  3. Opening the ``.c438`` file now will launch a pop-up console showing the image
-### Path argument
-``Colorir438.exe`` will try to open a image located in path given by the first argument, 
+## Additional features
+
+### Bitmap support
+Colorir438 supports most bitmap files (``.bmp``) through [wernsey/bitmap](https://github.com/wernsey/bitmap), see specific [compatibility](https://github.com/wernsey/bitmap#bitmap-api).
+
+### Directly visualizing images
+You can quickly open a pop-up console to visualize a image file:
+
+#### Explorer's "Open With"
+- Right click on the file, click on "Open With" and select ``Colorir438.exe``
+- Drag the file on the executable
+![example_open_with_drag](https://user-images.githubusercontent.com/44736064/63237145-29a18b80-c217-11e9-89d7-b1cea1f852e8.gif)
+
+
+#### Path argument
+``Colorir438.exe`` will try to open the image located in the path given by the first argument, 
 so running in the cmd the command ``Colorir438 path/to/image`` will launch a pop-up console showing the image. Example:
 
 <p align="center">
@@ -147,11 +158,11 @@ so running in the cmd the command ``Colorir438 path/to/image`` will launch a pop
 3. Click on Execute (Ctrl+F5).
 
 ## Download
-See [Releases](https://github.com/g-otn/Colorir438/releases/), the ``.zip`` containing the executable is in the "Assets" of a release.
+Download ``Colorir438.zip`` in the [Releases](https://github.com/g-otn/Colorir438/releases/)' Assets.
 
 ## Built with
-This project uses the ``_textcolor`` and the ``_textbackground`` functions from the [Pelles C](https://www.pellesc.de/index.php?page=overview) ``conio.h``.
-It allows to change the text color or background of a single character, instead of the whole Command Prompt (like the ``color`` cmd command).
+- ``_textcolor`` and ``_textbackground`` functions from the [Pelles C](https://www.pellesc.de/index.php?page=overview) ``conio.h``.
+- [wernsey/bitmap](https://github.com/wernsey/bitmap)
 
 ## Acknowledgements
 This project was inspired by the Coloring (IED-001) slideshow by Prof. Dr. Silvio do Lago Pereira of FATEC-SP's TI dept.
