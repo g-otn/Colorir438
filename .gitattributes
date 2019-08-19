@@ -1,0 +1,5 @@
+# sample images
+samples/* linguist-generated=true
+
+# wernsey/bitmap files
+**bmp.* linguist-vendored
