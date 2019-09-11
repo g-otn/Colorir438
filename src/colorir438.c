@@ -30,8 +30,9 @@ Imagem lerColorir438(FILE *arquivo)
             }
 
             // Ignora quebra de linha
-            while (ch == '\n')
+            while (ch == '\r' || ch == '\n') {
                 ch = fgetc(arquivo);
+            }
 
             if (ch == EOF) { // Encerra leitura se acabou os caracteres
                 fclose(arquivo);
