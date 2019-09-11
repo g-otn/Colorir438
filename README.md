@@ -161,7 +161,7 @@ so running in the cmd the command ``Colorir438 path/to/image`` will launch a pop
 3. Click on Execute (Ctrl+F5).
 
 ## Download
-Download ``Colorir438.zip`` in the [Releases](https://github.com/g-otn/Colorir438/releases/)' Assets.
+[Direct Download v0.4.1](https://github.com/g-otn/Colorir438/releases/download/v0.4.1/Colorir438-v0.4.1.zip) | [Releases](https://github.com/g-otn/Colorir438/releases/)
 
 ## Built with
 - ``_textcolor`` and ``_textbackground`` functions from the [Pelles C](https://www.pellesc.de/index.php?page=overview) ``conio.h``.
